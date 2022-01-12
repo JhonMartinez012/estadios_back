@@ -10,9 +10,15 @@ use Wildside\Userstamps\Userstamps;
 
 class Terreno extends Model
 {
+    public $table = 'terrenos'; // sirve para saber con que tabla va a estar interactuando
     use HasFactory;
     use Userstamps;
     use SoftDeletes;
+
+    protected $fillable =[
+        'nombre_terreno',
+        'img',
+    ];
 
     // ********* Relacion uno a muchos con estadios **************
     public function estadios()

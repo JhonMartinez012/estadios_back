@@ -10,6 +10,7 @@ use Wildside\Userstamps\Userstamps;
 
 class Ciudad extends Model
 {
+    public $table = 'ciudades';
     use HasFactory;
     use Userstamps;
     use SoftDeletes;

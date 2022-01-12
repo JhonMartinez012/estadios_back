@@ -10,14 +10,20 @@ use Wildside\Userstamps\Userstamps;
 
 class Pais extends Model
 {
+    public $table = 'paises';
     use HasFactory;
     use Userstamps;
     use SoftDeletes;
+
+    protected $fillable =[
+        'nombre_corto',
+        'nombre',
+    ];
 
 
     //Relacion uno a muchos con ciudades
     public function ciudades()
     {
-        return $this->hasMany('App\Models\Ciudad');
+        return $this->hasMany(Ciudad::class, 'pais_id', 'id');
     }
 }

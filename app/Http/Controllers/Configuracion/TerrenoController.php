@@ -1,15 +1,14 @@
 <?php
 
-namespace App\Http\Controllers\Estadio;
+namespace App\Http\Controllers\Configuracion;
 
 use App\Http\Controllers\Controller;
-use App\Models\Pais;
+use App\Models\Terreno;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Validator;
 
-class PaisController extends Controller
+class TerrenoController extends Controller
 {
-
-
     /**
      * Display a listing of the resource.
      *
@@ -17,12 +16,7 @@ class PaisController extends Controller
      */
     public function index()
     {
-        //$user_logeado = auth()->user();
-
-        $query = Pais::query();
-        $paises = $query->get();
-        
-        return ['paises' => $paises ];
+        //
     }
 
     /**
@@ -34,15 +28,17 @@ class PaisController extends Controller
     public function store(Request $request)
     {
         //
+        
+       
     }
 
     /**
      * Display the specified resource.
      *
-     * @param  \App\Models\Pais  $pais
+     * @param  \App\Models\Terreno  $terreno
      * @return \Illuminate\Http\Response
      */
-    public function show(Pais $pais)
+    public function show(Terreno $terreno)
     {
         //
     }
@@ -51,10 +47,10 @@ class PaisController extends Controller
      * Update the specified resource in storage.
      *
      * @param  \Illuminate\Http\Request  $request
-     * @param  \App\Models\Pais  $pais
+     * @param  \App\Models\Terreno  $terreno
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, Pais $pais)
+    public function update(Request $request, Terreno $terreno)
     {
         //
     }
@@ -62,10 +58,10 @@ class PaisController extends Controller
     /**
      * Remove the specified resource from storage.
      *
-     * @param  \App\Models\Pais  $pais
+     * @param  \App\Models\Terreno  $terreno
      * @return \Illuminate\Http\Response
      */
-    public function destroy(Pais $pais)
+    public function destroy(Terreno $terreno)
     {
         //
     }

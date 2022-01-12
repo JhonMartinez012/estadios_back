@@ -3,13 +3,11 @@
 namespace App\Http\Controllers\Estadio;
 
 use App\Http\Controllers\Controller;
-use App\Models\Pais;
+use App\Models\Ciudad;
 use Illuminate\Http\Request;
 
-class PaisController extends Controller
+class CiudadController extends Controller
 {
-
-
     /**
      * Display a listing of the resource.
      *
@@ -17,12 +15,7 @@ class PaisController extends Controller
      */
     public function index()
     {
-        //$user_logeado = auth()->user();
-
-        $query = Pais::query();
-        $paises = $query->get();
-        
-        return ['paises' => $paises ];
+        //
     }
 
     /**
@@ -39,10 +32,10 @@ class PaisController extends Controller
     /**
      * Display the specified resource.
      *
-     * @param  \App\Models\Pais  $pais
+     * @param  \App\Models\Ciudad  $ciudad
      * @return \Illuminate\Http\Response
      */
-    public function show(Pais $pais)
+    public function show(Ciudad $ciudad)
     {
         //
     }
@@ -51,10 +44,10 @@ class PaisController extends Controller
      * Update the specified resource in storage.
      *
      * @param  \Illuminate\Http\Request  $request
-     * @param  \App\Models\Pais  $pais
+     * @param  \App\Models\Ciudad  $ciudad
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, Pais $pais)
+    public function update(Request $request, Ciudad $ciudad)
     {
         //
     }
@@ -62,10 +55,10 @@ class PaisController extends Controller
     /**
      * Remove the specified resource from storage.
      *
-     * @param  \App\Models\Pais  $pais
+     * @param  \App\Models\Ciudad  $ciudad
      * @return \Illuminate\Http\Response
      */
-    public function destroy(Pais $pais)
+    public function destroy(Ciudad $ciudad)
     {
         //
     }

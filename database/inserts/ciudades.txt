@@ -1,0 +1,21 @@
+INSERT INTO ciudades (nombre, pais_id) VALUES ('Berlín',4);
+INSERT INTO ciudades (nombre, pais_id) VALUES ('Hamburgo',4);
+INSERT INTO ciudades (nombre, pais_id) VALUES ('Bremen',4);
+INSERT INTO ciudades (nombre, pais_id) VALUES ('Dresde',4);
+INSERT INTO ciudades (nombre, pais_id) VALUES ('Múnich',4);
+
+INSERT INTO ciudades (nombre, pais_id) VALUES ('Bucaramanga',52);
+INSERT INTO ciudades (nombre, pais_id) VALUES ('Bogotá',52);
+INSERT INTO ciudades (nombre, pais_id) VALUES ('cali',52);
+INSERT INTO ciudades (nombre, pais_id) VALUES ('Medellin',52);
+INSERT INTO ciudades (nombre, pais_id) VALUES ('Cúcuta',52);
+
+
+INSERT INTO ciudades (nombre, pais_id) VALUES ('Londres',78);
+INSERT INTO ciudades (nombre, pais_id) VALUES ('Liverpool',78);
+INSERT INTO ciudades (nombre, pais_id) VALUES ('Bristol',78);
+INSERT INTO ciudades (nombre, pais_id) VALUES ('Oxford',78);
+INSERT INTO ciudades (nombre, pais_id) VALUES ('Nottingham',78);
+
+
+

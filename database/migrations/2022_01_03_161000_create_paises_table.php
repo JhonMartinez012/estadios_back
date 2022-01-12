@@ -15,6 +15,7 @@ class CreatePaisesTable extends Migration
     {
         Schema::create('paises', function (Blueprint $table) {
             $table->id();
+            $table->String('nombre_corto',2);
             $table->String('nombre',45);
             $table->unsignedBigInteger('created_by')->nullable();
             $table->unsignedBigInteger('updated_by')->nullable();

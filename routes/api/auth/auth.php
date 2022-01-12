@@ -11,10 +11,8 @@ Route::group([
     'namespace'=> 'Auth'
 ], function ($router) {
     Route::post('login',  'AuthController@login');
-    /* Route::post('logout', 'App\Http\Controllers\Auth\AuthController@logout');
-    Route::post('refresh', 'App\Http\Controllers\Auth\AuthController@refresh');
-    Route::get('me', 'App\Http\Controllers\Auth\AuthController@me');
-    Route::post('register', 'App\Http\Controllers\Auth\AuthController@register'); */
-
-    //Route::get('paises','App\Http\Controllers\Estadios\EstadioController@')
+    Route::post('logout', 'AuthController@logout');
+    Route::post('refresh', 'AuthController@refresh');
+    Route::get('me', 'AuthController@me');
+    Route::post('register', 'AuthController@register');
 });
