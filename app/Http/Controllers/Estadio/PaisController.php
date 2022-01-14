@@ -18,11 +18,8 @@ class PaisController extends Controller
     public function index()
     {
         //$user_logeado = auth()->user();
-
-        $query = Pais::query();
-        $paises = $query->get();
-        
-        return ['paises' => $paises ];
+        $data = Pais::get();        
+        return response()->json($data);        
     }
 
     /**

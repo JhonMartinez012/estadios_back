@@ -26,4 +26,5 @@ class Terreno extends Model
         return $this->hasMany('App\Models\Estadio');
     }
     // ******************** Fin de la relacion ********************
+    
 }

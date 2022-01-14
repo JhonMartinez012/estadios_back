@@ -10,9 +10,14 @@ use Wildside\Userstamps\Userstamps;
 
 class MotivoInactividad extends Model
 {
+    public $table = 'motivos_inactividades'; // Nombre de la tabla en la DB
     use HasFactory;
     use Userstamps;
     use SoftDeletes;
+
+    protected $fillable =[
+        'nombre_motivo',
+    ];
 
 
     // RELACION MUCHOS A MUCHOS CON ESTADIOS

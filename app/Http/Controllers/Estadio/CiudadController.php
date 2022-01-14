@@ -62,4 +62,9 @@ class CiudadController extends Controller
     {
         //
     }
+    public function getCiudades(Request $request)
+    {
+        $data = Ciudad::where('pais_id', $request->pais_id)->get();
+        return response()->json($data);
+    }
 }

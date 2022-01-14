@@ -10,7 +10,7 @@ Route::group([
     'prefix' => 'terreno',
     'namespace'=> 'Configuracion'
 ], function ($router) {
-    //Route::get('terrenos',  'TerrenoController@index');
+    Route::get('terrenos',  'TerrenoController@index');
     Route::post('crear_terreno',  'TerrenoController@store');
     /* Route::post('logout', 'AuthController@logout');
     Route::post('refresh', 'AuthController@refresh');

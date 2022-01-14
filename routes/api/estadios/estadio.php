@@ -9,6 +9,8 @@ Route::group([
     'namespace'=> 'Estadio'
 ], function ($router) {
     Route::get('paises',  'PaisController@index');
-    Route::get('ciudades', 'CiudadController@index');
+    Route::get('ciudades', 'CiudadController@getCiudades');
+    
+    
     
 });
