@@ -16,11 +16,15 @@ class AdministradorController extends Controller
     public function index()
     {
         //Mostrar todos los administradores
-        $admimistradores=User::get();
-        foreach ($admimistradores as $administrador) {
-            $administrador->img=config('app.url_server').$administrador->img;
+        try {
+            $admimistradores = User::get();
+            foreach ($admimistradores as $administrador) {
+                $administrador->img = config('app.url_server') . $administrador->img;
+            }
+            return response()->json($admimistradores);
+        } catch (\Throwable $th) {
+            return $this->capturar($th);
         }
-        return response()->json($admimistradores);
     }
 
     /**

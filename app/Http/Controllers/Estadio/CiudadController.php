@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Estadio;
 
+use Illuminate\Support\Facades\DB;
 use App\Http\Controllers\Controller;
 use App\Models\Ciudad;
 use Illuminate\Http\Request;
@@ -64,7 +65,13 @@ class CiudadController extends Controller
     }
     public function getCiudades(Request $request)
     {
-        $data = Ciudad::where('pais_id', $request->pais_id)->get();
-        return response()->json($data);
+        try {
+            return DB::transaction(function () use($request) {            
+            $data = Ciudad::where('pais_id', $request->pais_id)->get();
+            return response()->json($data);
+        },5);
+        } catch (\Throwable $th) {
+            return $this->capturar($th);
+        }
     }
 }

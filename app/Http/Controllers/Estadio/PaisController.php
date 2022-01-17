@@ -17,9 +17,13 @@ class PaisController extends Controller
      */
     public function index()
     {
-        //$user_logeado = auth()->user();
-        $data = Pais::get();        
-        return response()->json($data);        
+        try {
+            //$user_logeado = auth()->user();
+            $data = Pais::get();
+            return response()->json($data);
+        } catch (\Throwable $th) {
+            return $this->capturar($th);
+        }
     }
 
     /**

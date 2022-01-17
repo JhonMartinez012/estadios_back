@@ -12,8 +12,7 @@ Route::group([
 ], function ($router) {
     Route::get('terrenos',  'TerrenoController@index');
     Route::post('crear_terreno',  'TerrenoController@store');
-    /* Route::post('logout', 'AuthController@logout');
-    Route::post('refresh', 'AuthController@refresh');
-    Route::get('me', 'AuthController@me');
-    Route::post('register', 'AuthController@register'); */
+    Route::put('editar_terreno/{id}', 'TerrenoController@update');
+    Route::delete('eliminar_terreno/{id}','TerrnoController@destroy');
+    
 });
