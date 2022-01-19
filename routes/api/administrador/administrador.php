@@ -9,7 +9,7 @@ Route::group([
     'namespace'=> 'Administrador'
 ], function ($router) {
     Route::get('administradores', 'AdministradorController@index');
-
-    //Route::post('crear_motivo',  'MotivoInactividadController@store');
-    
+    Route::get('administrador/{id}', 'AdministradorController@show');
+    Route::put('editar_administrador/{id}', 'AdministradorController@update');
+    Route::delete('eliminar_administrador/{id}', 'AdministradorController@destroy');
 });

@@ -13,6 +13,6 @@ Route::group([
     Route::get('terrenos',  'TerrenoController@index');
     Route::post('crear_terreno',  'TerrenoController@store');
     Route::put('editar_terreno/{id}', 'TerrenoController@update');
-    Route::delete('eliminar_terreno/{id}','TerrnoController@destroy');
+    Route::delete('eliminar_terreno/{id}','TerrenoController@destroy');
     
 });

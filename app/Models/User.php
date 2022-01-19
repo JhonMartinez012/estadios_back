@@ -17,7 +17,7 @@ class User extends Authenticatable implements JWTSubject
     use HasApiTokens, HasFactory, Notifiable;
     use SoftDeletes;
     use Userstamps;
-
+    public $table = 'users'; 
     /**
      * The attributes that are mass assignable.
      *
