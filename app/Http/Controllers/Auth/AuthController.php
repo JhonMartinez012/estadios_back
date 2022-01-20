@@ -96,6 +96,7 @@ class AuthController extends Controller
     public function register(Request $request)
     {
         try {
+            
             return DB::transaction(function () use ($request) {
 
                 $validator = Validator::make($request->all(), [
@@ -109,6 +110,7 @@ class AuthController extends Controller
                 if ($validator->fails()) {
                     return response()->json($validator->errors()->toJson(), 400);
                 }
+                
                 $image_64 = $request['img']; //your base64 encoded data
                 $extension = explode('/', explode(':', substr($image_64, 0, strpos($image_64, ';')))[1])[1];   // .jpg .png .pdf    
                 $replace = substr($image_64, 0, strpos($image_64, ',') + 1);

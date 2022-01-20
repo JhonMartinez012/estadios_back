@@ -17,6 +17,7 @@ class CreateEstadiosTable extends Migration
             $table->id();
             $table->String('nombre_estadio',45);
             $table->text('acerca_estadio');
+            $table->string('img_principal',45);
 
             $table->unsignedBigInteger('terreno_id');
             $table->unsignedBigInteger('ciudad_id');

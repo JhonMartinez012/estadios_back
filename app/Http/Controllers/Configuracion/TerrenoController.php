@@ -25,7 +25,6 @@ class TerrenoController extends Controller
             foreach ($terrenos as $terreno) {
                 $terreno->img = config('app.url_server') . $terreno->img;
             }
-
             return response()->json($terrenos);
         } catch (\Throwable $th) {
             return $this->capturar($th);
@@ -43,7 +42,7 @@ class TerrenoController extends Controller
     public function store(Request $request)
     {
         try {
-            return DB::transaction(function () use($request) {
+            return DB::transaction(function () use ($request) {
 
                 $validator = Validator::make($request->all(), [
                     'nombre_terreno' => 'required',

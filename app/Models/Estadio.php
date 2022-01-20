@@ -6,14 +6,22 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Wildside\Userstamps\Userstamps;
-    
+
 
 class Estadio extends Model
 {
+    public $table = 'estadios';
     use HasFactory;
     use Userstamps;
     use SoftDeletes;
 
+    protected $fillable = [
+        'nombre_estadio',
+        'acerca_estadio',
+        'img_principal',
+        'terreno_id',
+        'ciudad_id',
+    ];
 
     // ****** Relacion uno a muchos inverso con CIUDADES ********
     public function ciudad()

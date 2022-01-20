@@ -8,8 +8,13 @@ Route::group([
     'prefix' => 'estadio',
     'namespace'=> 'Estadio'
 ], function ($router) {
+    Route::get('listar_estadios',  'EstadioController@index');
+    Route::get('ver_estadio/{id}',  'EstadioController@show');
+
     Route::get('paises',  'PaisController@index');
     Route::get('ciudades', 'CiudadController@getCiudades');
+    Route::post('crear_estadio', 'EstadioController@store');
+
     
     
     
