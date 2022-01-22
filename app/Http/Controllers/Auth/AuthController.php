@@ -22,7 +22,7 @@ class AuthController extends Controller
      */
     public function __construct()
     {
-        $this->middleware('auth:api', ['except' => ['login', 'register']]);
+        $this->middleware('auth:api', ['except' => ['login']]);
     }
 
     /**
@@ -31,7 +31,18 @@ class AuthController extends Controller
      * @return \Illuminate\Http\JsonResponse
      */
 
-
+    public function index()
+    {
+        try {
+            $administradores = User::get();
+            foreach ($administradores as $administrador) {
+                $administrador->img = config('app.url_server') . $administrador->img;
+            }
+            return response()->json($administradores);
+        } catch (\Throwable $th) {
+            return $this->capturar($th);
+        }
+    }
 
     public function login()
     {
@@ -137,6 +148,67 @@ class AuthController extends Controller
             }, 5);
         } catch (\Throwable $th) {
             return $this->capturar($th);
+        }
+    }
+
+    public function show($id)
+    {
+        //
+        try {
+            $administrador = User::find($id);
+            $administrador->img = config('app.url_server') . $administrador->img;
+            if ($administrador) {
+                return response()->json($administrador);
+            }else{
+              return "Usuario no encontrado";
+            }
+        } catch (\Throwable $th) {
+            throw $th;
+        }
+    }
+
+    public function update($id,Request $request)
+    {
+        try {
+            $administrador = User::find($id);
+            return DB::transaction(function () use ($request, $administrador) {
+                $validator = Validator::make($request->all(), [
+                    'name' => 'required',
+                    'last_name' => 'required',
+                    'phone' => 'required|string|max:10',
+                    'acerca' => 'required',
+                    'email' => 'required|string|email|max:100',                    
+
+                ]);
+                if ($validator->fails()) {
+                    return response()->json($validator->errors()->toJson(), 400);
+                }
+                $administrador = $administrador->update([                    
+                    'name' => $request->input('name'),
+                    'last_name' => $request->input('last_name'),
+                    'phone' => $request->input('phone'),
+                    'acerca' => $request->input('acerca'),
+                    'email' => $request->input('email'),
+                ]);
+                return response()->json([
+                    'message' => '!Administrador Actualizado correctamente!',
+                    'Motivo' => $administrador,
+
+                ], 201);
+            }, 5);
+        } catch (\Throwable $th) {
+            return $this->capturar($th);
+        }
+    }
+    public function destroy($id)
+    {
+        // Eliminar usuarios
+        try {
+            $administrador = User::find($id);
+            $administrador->delete();
+            return response()->json('Administrador eliminado!');
+        } catch (\Throwable $th) {
+            throw $th;
         }
     }
 }

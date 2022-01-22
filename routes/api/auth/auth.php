@@ -7,13 +7,16 @@ use Illuminate\Support\Facades\Route;
 Route::group([
     'middleware' => 'api',
     'prefix' => 'auth',
-    'namespace'=> 'Auth'
+    'namespace' => 'Auth'
 ], function ($router) {
     Route::post('login',  'AuthController@login');
     Route::post('logout', 'AuthController@logout');
     Route::post('refresh', 'AuthController@refresh');
-    Route::get('me', 'AuthController@me');
+       
+    // rutas personalizadas para los administradores
     Route::post('register', 'AuthController@register');
-    //Route::get('hi', 'AuthController@hi');
-
+    Route::get('usuarios', 'AuthController@index'); 
+    Route::get('administrador/{id}', 'AuthController@show');
+    Route::put('editar_administrador/{id}', 'AuthController@update');
+    Route::delete('eliminar_administrador/{id}', 'AuthController@destroy');
 });

@@ -19,14 +19,11 @@ class EstadioController extends Controller
      */
     public function index()
     {
-        //
         try {
             $estadios = DB::table('estadios')
                 ->join('terrenos', 'estadios.terreno_id', '=', 'terrenos.id')
                 ->select('estadios.*', 'terrenos.img')
                 ->get();
-
-
             foreach ($estadios as $estadio) {
                 $estadio->img_principal = config('app.url_server') . $estadio->img_principal;
                 $estadio->img = config('app.url_server') . $estadio->img;
@@ -36,7 +33,6 @@ class EstadioController extends Controller
             return $this->capturar($th);
         }
     }
-
     /**
      * Store a newly created resource in storage.
      *
@@ -45,22 +41,18 @@ class EstadioController extends Controller
      */
     public function store(Request $request)
     {
-        //
         try {
             return DB::transaction(function () use ($request) {
-
                 $validator = Validator::make($request->all(), [
                     'nombre_estadio' => 'required',
                     'acerca_estadio' => 'required',
                     'img_principal' => 'required',
                     'terreno_id' => 'required',
                     'ciudad_id' => 'required',
-
                 ]);
                 if ($validator->fails()) {
                     return response()->json($validator->errors()->toJson(), 400);
                 }
-
                 $image_64 = $request['img_principal']; //your base64 encoded data
                 $extension = explode('/', explode(':', substr($image_64, 0, strpos($image_64, ';')))[1])[1];   // .jpg .png .pdf
                 $replace = substr($image_64, 0, strpos($image_64, ',') + 1);
@@ -68,23 +60,20 @@ class EstadioController extends Controller
                 $image = str_replace($replace, '', $image_64);
                 $image = str_replace(' ', '+', $image);
                 $imageName = Str::random(10) . '.' . $extension;
-                $img_val = Storage::url($imageName);
+                $img_principal = Storage::url($imageName);
                 $url_img = Storage::disk('public')->put($imageName, base64_decode($image));
-
                 if ($url_img) {
                     $estadio = Estadio::create([
                         'nombre_estadio' => $request->input('nombre_estadio'),
                         'acerca_estadio' => $request->input('acerca_estadio'),
-                        'img_principal' => $img_val,
+                        'img_principal' => $img_principal,
                         'terreno_id' => $request->input('terreno_id'),
                         'ciudad_id' => $request->input('ciudad_id'),
-
-
                     ]);
                 }
                 return response()->json([
                     'message' => 'Estadio registrado correctamente!',
-                    'terreno' => $estadio,
+                    'Estadio' => $estadio,
                     'id' => $estadio->id,
 
                 ], 201);
@@ -93,7 +82,6 @@ class EstadioController extends Controller
             throw $th;
         }
     }
-
     /**
      * Display the specified resource.
      *
@@ -103,23 +91,21 @@ class EstadioController extends Controller
     public function show($id)
     {
         //       
-        try {   
+        try {
             $estadio = DB::table('estadios')
                 ->join('terrenos', 'estadios.terreno_id', '=', 'terrenos.id')
-                ->where('estadios.id','=', $id)
-                ->select('estadios.*', 'terrenos.img')                
-                ->get();
-
-            //$estadio->img_principal=config('app.url_server') . $estadio->img_principal;
-            //$estadio->img=config('app.url_server') . $estadio->img;
+                ->join('ciudades', 'estadios.ciudad_id', '=', 'ciudades.id')
+                ->join('paises','ciudades.pais_id','=','paises.id')
+                ->where('estadios.id', $id)
+                ->select('estadios.*', 'terrenos.*', 'ciudades.*','paises.nombre as nom_pais')
+                ->first();
+            $estadio->img_principal = config('app.url_server') . $estadio->img_principal;
+            $estadio->img = config('app.url_server') . $estadio->img;
             return response()->json($estadio);
-
         } catch (\Throwable $th) {
             throw $th;
         }
-
     }
-
     /**
      * Update the specified resource in storage.
      *

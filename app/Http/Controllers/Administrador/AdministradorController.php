@@ -19,15 +19,7 @@ class AdministradorController extends Controller
     public function index()
     {
         //Mostrar todos los administradores
-        try {
-            $administradores = User::get();
-            foreach ($administradores as $administrador) {
-                $administrador->img = config('app.url_server') . $administrador->img;
-            }
-            return response()->json($administradores);
-        } catch (\Throwable $th) {
-            return $this->capturar($th);
-        }
+        
     }
 
     /**
