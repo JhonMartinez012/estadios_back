@@ -2,12 +2,11 @@
 
 namespace App\Http\Controllers\Estadio;
 
-use Illuminate\Support\Facades\DB;
 use App\Http\Controllers\Controller;
-use App\Models\Ciudad;
+use App\Models\Imagen;
 use Illuminate\Http\Request;
 
-class CiudadController extends Controller
+class ImagenesController extends Controller
 {
     /**
      * Display a listing of the resource.
@@ -33,10 +32,10 @@ class CiudadController extends Controller
     /**
      * Display the specified resource.
      *
-     * @param  \App\Models\Ciudad  $ciudad
+     * @param  \App\Models\Imagen  $imagen
      * @return \Illuminate\Http\Response
      */
-    public function show(Ciudad $ciudad)
+    public function show(Imagen $imagen)
     {
         //
     }
@@ -45,10 +44,10 @@ class CiudadController extends Controller
      * Update the specified resource in storage.
      *
      * @param  \Illuminate\Http\Request  $request
-     * @param  \App\Models\Ciudad  $ciudad
+     * @param  \App\Models\Imagen  $imagen
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, Ciudad $ciudad)
+    public function update(Request $request, Imagen $imagen)
     {
         //
     }
@@ -56,22 +55,11 @@ class CiudadController extends Controller
     /**
      * Remove the specified resource from storage.
      *
-     * @param  \App\Models\Ciudad  $ciudad
+     * @param  \App\Models\Imagen  $imagen
      * @return \Illuminate\Http\Response
      */
-    public function destroy(Ciudad $ciudad)
+    public function destroy(Imagen $imagen)
     {
         //
-    }
-    public function getCiudades(Request $request)
-    {
-        try {
-            return DB::transaction(function () use($request) {            
-            $data = Ciudad::where('pais_id', $request->pais_id)->get();
-            return response()->json(['ciudades'=>$data]);
-        },5);
-        } catch (\Throwable $th) {
-            return $this->capturar($th);
-        }
     }
 }

@@ -20,7 +20,7 @@ class PaisController extends Controller
         try {
             //$user_logeado = auth()->user();
             $data = Pais::get();
-            return response()->json($data);
+            return response()->json(['paises'=>$data]);
         } catch (\Throwable $th) {
             return $this->capturar($th);
         }

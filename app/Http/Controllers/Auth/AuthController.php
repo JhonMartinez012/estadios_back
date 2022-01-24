@@ -38,7 +38,7 @@ class AuthController extends Controller
             foreach ($administradores as $administrador) {
                 $administrador->img = config('app.url_server') . $administrador->img;
             }
-            return response()->json($administradores);
+            return response()->json(['administradores'=>$administradores]);
         } catch (\Throwable $th) {
             return $this->capturar($th);
         }
@@ -112,7 +112,7 @@ class AuthController extends Controller
 
                 $validator = Validator::make($request->all(), [
                     'name' => 'required',
-                    'last_name' => 'required',
+                    'lastName' => 'required',
                     'phone' => 'required|string|max:10',
                     'acerca' => 'required',
                     'email' => 'required|string|email|max:100',
@@ -135,7 +135,7 @@ class AuthController extends Controller
                 if ($url_img) {
                     $user = User::create(array_merge(
                         $validator->validate(),
-                        [
+                        [   'last_name'=> $request->lastName,
                             'password' => bcrypt($request->password),
                             'img' => $img_val,
                         ]
@@ -147,7 +147,7 @@ class AuthController extends Controller
                 ], 201);
             }, 5);
         } catch (\Throwable $th) {
-            return $this->capturar($th);
+            throw $th;
         }
     }
 
@@ -158,7 +158,7 @@ class AuthController extends Controller
             $administrador = User::find($id);
             $administrador->img = config('app.url_server') . $administrador->img;
             if ($administrador) {
-                return response()->json($administrador);
+                return response()->json(['administrador'=>$administrador]);
             }else{
               return "Usuario no encontrado";
             }
@@ -174,7 +174,7 @@ class AuthController extends Controller
             return DB::transaction(function () use ($request, $administrador) {
                 $validator = Validator::make($request->all(), [
                     'name' => 'required',
-                    'last_name' => 'required',
+                    'lastName' => 'required',
                     'phone' => 'required|string|max:10',
                     'acerca' => 'required',
                     'email' => 'required|string|email|max:100',                    
@@ -184,11 +184,11 @@ class AuthController extends Controller
                     return response()->json($validator->errors()->toJson(), 400);
                 }
                 $administrador = $administrador->update([                    
-                    'name' => $request->input('name'),
-                    'last_name' => $request->input('last_name'),
-                    'phone' => $request->input('phone'),
-                    'acerca' => $request->input('acerca'),
-                    'email' => $request->input('email'),
+                    'name' => $request->name,
+                    'last_name' => $request->lastName,
+                    'phone' => $request->phone,
+                    'acerca' => $request->acerca,
+                    'email' => $request->email,
                 ]);
                 return response()->json([
                     'message' => '!Administrador Actualizado correctamente!',
@@ -206,7 +206,7 @@ class AuthController extends Controller
         try {
             $administrador = User::find($id);
             $administrador->delete();
-            return response()->json('Administrador eliminado!');
+            return response()->json(['administrador'=>'Administrador eliminado!']);
         } catch (\Throwable $th) {
             throw $th;
         }

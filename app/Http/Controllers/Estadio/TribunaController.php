@@ -17,12 +17,12 @@ class TribunaController extends Controller
      */
     public function index()
     {
-        try {
+        /* try {
             $tribunas=Tribuna::get();
             return response()->json($tribunas);
         } catch (\Throwable $th) {
             throw $th;
-        }
+        } */
     }
 
     /**
@@ -44,19 +44,19 @@ class TribunaController extends Controller
                 if ($validator->fails()) {
                     return response()->json($validator->errors()->toJson(), 400);
                 }
-                $tribuna=Tribuna::create([
-                    'nombre_tribuna'=>$request->input('nombre_tribuna'),
-                    'capacidad'=>$request->capacidad,
-                    'valor_boleta'=>$request->valor_boleta,
-                    'estadio_id'=>$request->estadio_id,
+                $tribuna = Tribuna::create([
+                    'nombre_tribuna' => $request->nombreTribuna,
+                    'capacidad' => $request->capacidad,
+                    'valor_boleta' => $request->valorBoleta,
+                    'estadio_id' => $request->estadioId,
                 ]);
-                if($tribuna){
+                if ($tribuna) {
                     return response()->json([
                         'message' => 'tribuna registrado correctamente!',
                         'Tribuna' => $tribuna,
                     ], 201);
                 }
-            },5);
+            }, 5);
         } catch (\Throwable $th) {
             throw $th;
         }
@@ -68,9 +68,20 @@ class TribunaController extends Controller
      * @param  \App\Models\Tribuna  $tribuna
      * @return \Illuminate\Http\Response
      */
-    public function show(Tribuna $tribuna)
+    public function show($id)
     {
         //
+        try {
+            $tribunas = Tribuna::where('estadio_id',$id)->get();
+
+            if ($tribunas) {
+                return response()->json(['tribunas'=>$tribunas]);
+            }else{
+                return "No tiene tribunas asignadas";
+            }
+        } catch (\Throwable $th) {
+            throw $th;
+        }
     }
 
     /**

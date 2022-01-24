@@ -28,7 +28,7 @@ class EstadioController extends Controller
                 $estadio->img_principal = config('app.url_server') . $estadio->img_principal;
                 $estadio->img = config('app.url_server') . $estadio->img;
             }
-            return response()->json($estadios);
+            return response()->json(['estadios'=>$estadios]);
         } catch (\Throwable $th) {
             return $this->capturar($th);
         }
@@ -44,16 +44,16 @@ class EstadioController extends Controller
         try {
             return DB::transaction(function () use ($request) {
                 $validator = Validator::make($request->all(), [
-                    'nombre_estadio' => 'required',
-                    'acerca_estadio' => 'required',
-                    'img_principal' => 'required',
-                    'terreno_id' => 'required',
-                    'ciudad_id' => 'required',
+                    'nombreEstadio' => 'required',
+                    'acercaEstadio' => 'required',
+                    'imgPrincipal' => 'required',
+                    'ciudadId' => 'required',
+                    'terrenoId' => 'required',
                 ]);
                 if ($validator->fails()) {
                     return response()->json($validator->errors()->toJson(), 400);
                 }
-                $image_64 = $request['img_principal']; //your base64 encoded data
+                $image_64 = $request['imgPrincipal']; //your base64 encoded data
                 $extension = explode('/', explode(':', substr($image_64, 0, strpos($image_64, ';')))[1])[1];   // .jpg .png .pdf
                 $replace = substr($image_64, 0, strpos($image_64, ',') + 1);
                 // find substring fro replace here eg: data:image/png;base64,
@@ -64,11 +64,11 @@ class EstadioController extends Controller
                 $url_img = Storage::disk('public')->put($imageName, base64_decode($image));
                 if ($url_img) {
                     $estadio = Estadio::create([
-                        'nombre_estadio' => $request->input('nombre_estadio'),
-                        'acerca_estadio' => $request->input('acerca_estadio'),
+                        'nombre_estadio' => $request->input('nombreEstadio'),
+                        'acerca_estadio' => $request->input('acercaEstadio'),
                         'img_principal' => $img_principal,
-                        'terreno_id' => $request->input('terreno_id'),
-                        'ciudad_id' => $request->input('ciudad_id'),
+                        'terreno_id' => $request->input('terrenoId'),
+                        'ciudad_id' => $request->input('ciudadId'),
                     ]);
                 }
                 return response()->json([
@@ -101,7 +101,7 @@ class EstadioController extends Controller
                 ->first();
             $estadio->img_principal = config('app.url_server') . $estadio->img_principal;
             $estadio->img = config('app.url_server') . $estadio->img;
-            return response()->json($estadio);
+            return response()->json(['estadio'=>$estadio]);
         } catch (\Throwable $th) {
             throw $th;
         }

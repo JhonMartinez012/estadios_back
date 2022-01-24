@@ -42,7 +42,7 @@ class AdministradorController extends Controller
     public function show($id)
     {
         //
-        try {
+        /* try {
             $administrador = User::find($id);
             $administrador->img = config('app.url_server') . $administrador->img;
             if ($administrador) {
@@ -52,7 +52,7 @@ class AdministradorController extends Controller
             }
         } catch (\Throwable $th) {
             throw $th;
-        }
+        } */
     }
 
     /**

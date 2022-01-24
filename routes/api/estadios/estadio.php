@@ -15,6 +15,6 @@ Route::group([
     Route::get('ciudades', 'CiudadController@getCiudades');
     Route::post('crear_estadio', 'EstadioController@store');
 
-    Route::get("listar_tribunas",'TribunaController@index');
+    Route::get("listar_tribunas/{id}",'TribunaController@show');
     Route::post('crear_tribuna', 'TribunaController@store');
 });

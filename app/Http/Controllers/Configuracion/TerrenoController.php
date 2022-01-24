@@ -25,7 +25,7 @@ class TerrenoController extends Controller
             foreach ($terrenos as $terreno) {
                 $terreno->img = config('app.url_server') . $terreno->img;
             }
-            return response()->json($terrenos);
+            return response()->json(['terrenos'=>$terrenos]);
         } catch (\Throwable $th) {
             return $this->capturar($th);
         }
