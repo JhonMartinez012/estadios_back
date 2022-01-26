@@ -18,13 +18,13 @@ class JwtMiddleware extends BaseMiddleware
             return response(['status' => 'Token invalido'], 401);
         }
         catch (\Tymon\JWTAuth\Exceptions\TokenExpiredException $e) {
-            return response(['status' => 'El token ha expirado'], 403);
+            return response(['status' => 'El token ha expiradooooo'], 403);
         }
         catch (\Tymon\JWTAuth\JWTException $e) {
             return response(['status' => 'Token invalido'], 401);
         }
         catch (Exception $e) {
-            return response(['status' => 'El token no ha sido encontrado'], 401);
+            return response(['status' => 'El token no ha sido encontradoooo'], 401);
         }
     }
 }

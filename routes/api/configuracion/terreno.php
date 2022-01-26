@@ -6,7 +6,7 @@ use Illuminate\Support\Facades\Route;
 
 
 Route::group([
-    'middleware' => ['api','cors'],
+    'middleware' => ['auth'],
     'prefix' => 'terreno',
     'namespace'=> 'Configuracion'
 ], function ($router) {

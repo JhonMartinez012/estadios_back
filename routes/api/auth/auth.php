@@ -5,7 +5,7 @@ use Illuminate\Support\Facades\Route;
 
 
 Route::group([
-    'middleware' => 'api',
+    'middleware' => ['auth'],
     'prefix' => 'auth',
     'namespace' => 'Auth'
 ], function ($router) {

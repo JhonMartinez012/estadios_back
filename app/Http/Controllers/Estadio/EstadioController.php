@@ -30,7 +30,7 @@ class EstadioController extends Controller
             }
             return response()->json(['estadios'=>$estadios]);
         } catch (\Throwable $th) {
-            return $this->capturar($th);
+            throw $th;
         }
     }
     /**
@@ -72,6 +72,7 @@ class EstadioController extends Controller
                     ]);
                 }
                 return response()->json([
+                    'exito'=>true,
                     'message' => 'Estadio registrado correctamente!',
                     'Estadio' => $estadio,
                     'id' => $estadio->id,

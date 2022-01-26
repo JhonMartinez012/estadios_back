@@ -192,7 +192,7 @@ class AuthController extends Controller
                 ]);
                 return response()->json([
                     'message' => '!Administrador Actualizado correctamente!',
-                    'Motivo' => $administrador,
+                    'Administrador' => $administrador,
 
                 ], 201);
             }, 5);

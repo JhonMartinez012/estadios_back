@@ -6,7 +6,7 @@ use Illuminate\Support\Facades\Route;
 
 
 Route::group([
-    'middleware' => 'api',
+    'middleware' => ['auth'],
     'prefix' => 'motivo_inactividad',
     'namespace'=> 'Configuracion'
 ], function ($router) {

@@ -15,18 +15,18 @@ class CreateCiudadesTable extends Migration
     {
         Schema::create('ciudades', function (Blueprint $table) {
             $table->id();
-            $table->String('nombre',45);
+            $table->String('nombre', 45);
 
             $table->unsignedBigInteger('pais_id');
             $table->foreign('pais_id')
-                  ->references('id')
-                  ->on('paises');
+                ->references('id')
+                ->on('paises');
 
-                  $table->unsignedBigInteger('created_by')->nullable();
-                  $table->unsignedBigInteger('updated_by')->nullable();
-                  $table->unsignedBigInteger('deleted_by')->nullable();
-                  $table->timestamps();
-                  $table->softDeletes();
+            $table->unsignedBigInteger('created_by')->nullable();
+            $table->unsignedBigInteger('updated_by')->nullable();
+            $table->unsignedBigInteger('deleted_by')->nullable();
+            $table->timestamps();
+            $table->softDeletes();
         });
     }
 
