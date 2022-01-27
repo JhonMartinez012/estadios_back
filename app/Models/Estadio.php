@@ -19,6 +19,7 @@ class Estadio extends Model
         'nombre_estadio',
         'acerca_estadio',
         'img_principal',
+        'capacidad_estadio',
         'terreno_id',
         'ciudad_id',
     ];

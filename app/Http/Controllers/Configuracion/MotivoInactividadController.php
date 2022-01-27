@@ -19,7 +19,7 @@ class MotivoInactividadController extends Controller
     public function index()
     {
         //
-        $motivos_inactividad = MotivoInactividad::select()->selectRaw("1 as disabled")->get();
+        $motivos_inactividad = MotivoInactividad::select()->selectRaw("1 as disabled")->withCount(['estadios'])->get();
         return response()->json(['motivos_inactividad'=>$motivos_inactividad]);
         // select raw para subconsultas;
     }

@@ -14,10 +14,11 @@ class CreateEstadiosTable extends Migration
     public function up()
     {
         Schema::create('estadios', function (Blueprint $table) {
-            $table->id();
+            $table->bigIncrements('id');
             $table->String('nombre_estadio',45);
             $table->text('acerca_estadio');
             $table->string('img_principal',45);
+            $table->integer('capacidad_estadio');
 
             $table->unsignedBigInteger('terreno_id');
             $table->unsignedBigInteger('ciudad_id');

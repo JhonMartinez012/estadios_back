@@ -21,7 +21,7 @@ class TerrenoController extends Controller
     public function index()
     {
         try {
-            $terrenos = Terreno::get();
+            $terrenos = Terreno::withCount(['estadios'])->get();
             foreach ($terrenos as $terreno) {
                 $terreno->img = config('app.url_server') . $terreno->img;
             }
@@ -71,6 +71,7 @@ class TerrenoController extends Controller
                     ]);
                 }
                 return response()->json([
+                    'aceptado'=>true,
                     'message' => '¡Terreno registrado correctamente!',
                     'terreno' => $terreno,
 
@@ -79,8 +80,6 @@ class TerrenoController extends Controller
         } catch (\Throwable $th) {
             throw $th;
         }
-
-
         //
     }
 

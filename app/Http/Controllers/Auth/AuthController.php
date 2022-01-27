@@ -38,7 +38,7 @@ class AuthController extends Controller
             foreach ($administradores as $administrador) {
                 $administrador->img = config('app.url_server') . $administrador->img;
             }
-            return response()->json(['administradores'=>$administradores]);
+            return response()->json(['administradores' => $administradores]);
         } catch (\Throwable $th) {
             return $this->capturar($th);
         }
@@ -63,7 +63,13 @@ class AuthController extends Controller
      */
     public function me()
     {
-        return response()->json(auth()->user());
+        try {
+            $userLog = auth()->user();
+            $userLog->img=config('app.url_server') . $userLog->img;
+            return response()->json($userLog);
+        } catch (\Throwable $th) {
+            throw $th;
+        }
     }
 
     /**
@@ -107,7 +113,7 @@ class AuthController extends Controller
     public function register(Request $request)
     {
         try {
-            
+
             return DB::transaction(function () use ($request) {
 
                 $validator = Validator::make($request->all(), [
@@ -121,7 +127,7 @@ class AuthController extends Controller
                 if ($validator->fails()) {
                     return response()->json($validator->errors()->toJson(), 400);
                 }
-                
+
                 $image_64 = $request['img']; //your base64 encoded data
                 $extension = explode('/', explode(':', substr($image_64, 0, strpos($image_64, ';')))[1])[1];   // .jpg .png .pdf    
                 $replace = substr($image_64, 0, strpos($image_64, ',') + 1);
@@ -135,11 +141,13 @@ class AuthController extends Controller
                 if ($url_img) {
                     $user = User::create(array_merge(
                         $validator->validate(),
-                        [   'last_name'=> $request->lastName,
+                        [
+                            'last_name' => $request->lastName,
                             'password' => bcrypt($request->password),
                             'img' => $img_val,
                         ]
                     ));
+                    
                 }
                 return response()->json([
                     'message' => '¡Usuario registrado correctamente!',
@@ -158,16 +166,16 @@ class AuthController extends Controller
             $administrador = User::find($id);
             $administrador->img = config('app.url_server') . $administrador->img;
             if ($administrador) {
-                return response()->json(['administrador'=>$administrador]);
-            }else{
-              return "Usuario no encontrado";
+                return response()->json(['administrador' => $administrador]);
+            } else {
+                return "Usuario no encontrado";
             }
         } catch (\Throwable $th) {
             throw $th;
         }
     }
 
-    public function update($id,Request $request)
+    public function update($id, Request $request)
     {
         try {
             $administrador = User::find($id);
@@ -177,13 +185,13 @@ class AuthController extends Controller
                     'lastName' => 'required',
                     'phone' => 'required|string|max:10',
                     'acerca' => 'required',
-                    'email' => 'required|string|email|max:100',                    
+                    'email' => 'required|string|email|max:100',
 
                 ]);
                 if ($validator->fails()) {
                     return response()->json($validator->errors()->toJson(), 400);
                 }
-                $administrador = $administrador->update([                    
+                $administrador = $administrador->update([
                     'name' => $request->name,
                     'last_name' => $request->lastName,
                     'phone' => $request->phone,
@@ -206,7 +214,7 @@ class AuthController extends Controller
         try {
             $administrador = User::find($id);
             $administrador->delete();
-            return response()->json(['administrador'=>'Administrador eliminado!']);
+            return response()->json(['administrador' => 'Administrador eliminado!']);
         } catch (\Throwable $th) {
             throw $th;
         }

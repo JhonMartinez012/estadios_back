@@ -36,10 +36,10 @@ class TribunaController extends Controller
         try {
             return DB::transaction(function () use ($request) {
                 $validator = Validator::make($request->all(), [
-                    'nombre_tribuna' => 'required',
+                    'nombreTribuna' => 'required',
                     'capacidad' => 'required|numeric',
-                    'valor_boleta' => 'numeric|required',
-                    'estadio_id' => 'required|numeric',
+                    'valorBoleta' => 'numeric|required',
+                    'estadioId' => 'required|numeric',
                 ]);
                 if ($validator->fails()) {
                     return response()->json($validator->errors()->toJson(), 400);

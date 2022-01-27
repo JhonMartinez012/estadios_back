@@ -15,4 +15,5 @@ Route::group([
     Route::put('editar_terreno/{id}', 'TerrenoController@update');
     Route::delete('eliminar_terreno/{id}','TerrenoController@destroy');
     
+    
 });

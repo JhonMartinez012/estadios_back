@@ -47,6 +47,7 @@ class EstadioController extends Controller
                     'nombreEstadio' => 'required',
                     'acercaEstadio' => 'required',
                     'imgPrincipal' => 'required',
+                    'capacidadEstadio'=>'required',
                     'ciudadId' => 'required',
                     'terrenoId' => 'required',
                 ]);
@@ -67,6 +68,7 @@ class EstadioController extends Controller
                         'nombre_estadio' => $request->input('nombreEstadio'),
                         'acerca_estadio' => $request->input('acercaEstadio'),
                         'img_principal' => $img_principal,
+                        'capacidad_estadio'=>$request['capacidadEstadio'],
                         'terreno_id' => $request->input('terrenoId'),
                         'ciudad_id' => $request->input('ciudadId'),
                     ]);
