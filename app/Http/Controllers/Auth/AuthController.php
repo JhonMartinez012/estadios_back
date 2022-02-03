@@ -4,7 +4,7 @@ namespace App\Http\Controllers\Auth;
 
 use Illuminate\Http\Request;
 
-//use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Auth;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Validator;
 use App\Models\User;
@@ -31,28 +31,13 @@ class AuthController extends Controller
      * @return \Illuminate\Http\JsonResponse
      */
 
-    public function index()
-    {
-        try {
-            $administradores = User::get();
-            foreach ($administradores as $administrador) {
-                $administrador->img = config('app.url_server') . $administrador->img;
-            }
-            return response()->json(['administradores' => $administradores]);
-        } catch (\Throwable $th) {
-            return $this->capturar($th);
-        }
-    }
-
     public function login()
     {
-
         $credentials = request(['email', 'password']);
 
         if (!$token = auth()->attempt($credentials)) {
             return response()->json(['error' => 'No autorizado'], 401);
         }
-
         return $this->respondWithToken($token);
     }
 
@@ -65,7 +50,7 @@ class AuthController extends Controller
     {
         try {
             $userLog = auth()->user();
-            $userLog->img=config('app.url_server') . $userLog->img;
+            $userLog->img = config('app.url_server') . $userLog->img;
             return response()->json($userLog);
         } catch (\Throwable $th) {
             throw $th;
@@ -80,9 +65,10 @@ class AuthController extends Controller
     public function logout()
     {
         auth()->logout();
-
         return response()->json(['message' => 'Successfully logged out']);
     }
+
+
 
     /**
      * Refresh a token.
@@ -110,12 +96,24 @@ class AuthController extends Controller
         ]);
     }
 
+
+    public function index()
+    {
+        try {
+            $administradores = User::get();
+            foreach ($administradores as $administrador) {
+                $administrador->img = config('app.url_server') . $administrador->img;
+            }
+            return response()->json(['administradores' => $administradores]);
+        } catch (\Throwable $th) {
+            return $this->capturar($th);
+        }
+    }
+
     public function register(Request $request)
     {
         try {
-
             return DB::transaction(function () use ($request) {
-
                 $validator = Validator::make($request->all(), [
                     'name' => 'required',
                     'lastName' => 'required',
@@ -123,36 +121,49 @@ class AuthController extends Controller
                     'acerca' => 'required',
                     'email' => 'required|string|email|max:100',
                     'password' => 'required|string|min:6',
+                    'repassword' => 'required|string|min:6',
+                ], [
+                    'name.required' => 'Campo nombres obligatorio',
+                    'lastName.required' => 'Campo apellidos obligatorio',
+                    'phone.required' => 'Campo teléfono obligatorio',
+                    'acerca.required' => 'Campo acerca obligatorio',
+                    'email.required' => 'Campo correo electronico obligatorio',
+                    'repassword' =>'Campo repetir contraseña obligatorio'
                 ]);
                 if ($validator->fails()) {
-                    return response()->json($validator->errors()->toJson(), 400);
-                }
+                    return response()->json([
+                        'success'=> false,
+                        'error' => $validator->errors(),                        
+                    ], 200);
+                };
 
-                $image_64 = $request['img']; //your base64 encoded data
-                $extension = explode('/', explode(':', substr($image_64, 0, strpos($image_64, ';')))[1])[1];   // .jpg .png .pdf    
-                $replace = substr($image_64, 0, strpos($image_64, ',') + 1);
-                // find substring fro replace here eg: data:image/png;base64,    
-                $image = str_replace($replace, '', $image_64);
-                $image = str_replace(' ', '+', $image);
-                $imageName = Str::random(10) . '.' . $extension;
-                $img_val = Storage::url($imageName);
-                $url_img = Storage::disk('public')->put($imageName, base64_decode($image));
+                if ($request['password'] === $request['repassword']) {
+                    $image_64 = $request['img']; //your base64 encoded data
+                    $extension = explode('/', explode(':', substr($image_64, 0, strpos($image_64, ';')))[1])[1];   // .jpg .png .pdf    
+                    $replace = substr($image_64, 0, strpos($image_64, ',') + 1);
+                    // find substring fro replace here eg: data:image/png;base64,    
+                    $image = str_replace($replace, '', $image_64);
+                    $image = str_replace(' ', '+', $image);
+                    $imageName = Str::random(10) . '.' . $extension;
+                    $img_val = Storage::url($imageName);
+                    $url_img = Storage::disk('public')->put($imageName, base64_decode($image));
 
-                if ($url_img) {
-                    $user = User::create(array_merge(
-                        $validator->validate(),
-                        [
-                            'last_name' => $request->lastName,
-                            'password' => bcrypt($request->password),
-                            'img' => $img_val,
-                        ]
-                    ));
-                    
+                    if ($url_img) {
+                        $user = User::create(array_merge(
+                            $validator->validate(),
+                            [
+                                'last_name' => $request->lastName,
+                                'password' => bcrypt($request->password),
+                                'img' => $img_val,
+                            ]
+                        ));
+                    }
+                    return response()->json([
+                        'success'=>true,
+                        'message' => '¡Usuario registrado correctamente!',
+                        'user' => $user,
+                    ], 201);
                 }
-                return response()->json([
-                    'message' => '¡Usuario registrado correctamente!',
-                    'user' => $user,
-                ], 201);
             }, 5);
         } catch (\Throwable $th) {
             throw $th;

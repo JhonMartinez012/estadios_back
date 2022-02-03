@@ -42,8 +42,11 @@ class TribunaController extends Controller
                     'estadioId' => 'required|numeric',
                 ]);
                 if ($validator->fails()) {
-                    return response()->json($validator->errors()->toJson(), 400);
-                }
+                    return response()->json([
+                        'succcess' => false,
+                        'errores' => $validator->errors()->toJson()
+                    ], 200);
+                };
                 $tribuna = Tribuna::create([
                     'nombre_tribuna' => $request->nombreTribuna,
                     'capacidad' => $request->capacidad,
@@ -52,6 +55,7 @@ class TribunaController extends Controller
                 ]);
                 if ($tribuna) {
                     return response()->json([
+                        'success'=> true,
                         'message' => 'tribuna registrado correctamente!',
                         'Tribuna' => $tribuna,
                     ], 201);
@@ -72,11 +76,10 @@ class TribunaController extends Controller
     {
         //
         try {
-            $tribunas = Tribuna::where('estadio_id',$id)->get();
-
+            $tribunas = Tribuna::where('estadio_id', $id)->get();
             if ($tribunas) {
-                return response()->json(['tribunas'=>$tribunas]);
-            }else{
+                return response()->json(['tribunas' => $tribunas]);
+            } else {
                 return "No tiene tribunas asignadas";
             }
         } catch (\Throwable $th) {
@@ -91,9 +94,32 @@ class TribunaController extends Controller
      * @param  \App\Models\Tribuna  $tribuna
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, Tribuna $tribuna)
+    public function update($id, Request $request)
     {
-        //
+        try {
+            $tribuna = Tribuna::find($id);
+            return DB::transaction(function () use ($request, $tribuna) {
+                $validator = Validator::make($request->all(), [
+                    'nombreTribuna' => 'required',
+                    'capacidad' => 'required|numeric',
+                    'valorBoleta' => 'required|numeric',
+                ]);
+                if ($validator->fails()) {
+                    return response()->json($validator->errors()->toJson(), 400);
+                }
+                $tribuna = $tribuna->update([
+                    'nombre_tribuna' => $request->nombreTribuna,
+                    'capacidad' => $request->capacidad,
+                    'valor_boleta' => $request->valorBoleta,
+                ]);
+                return response()->json([
+                    'message' => '!Tribuna Actualizada correctamente!',
+                    'actualizado' => true,
+                ], 201);
+            }, 5);
+        } catch (\Throwable $th) {
+            throw $th;
+        }
     }
 
     /**
@@ -102,8 +128,16 @@ class TribunaController extends Controller
      * @param  \App\Models\Tribuna  $tribuna
      * @return \Illuminate\Http\Response
      */
-    public function destroy(Tribuna $tribuna)
+    public function destroy($id)
     {
-        //
+        try {
+            $tribunaDelete = Tribuna::find($id);
+            $tribunaDelete->delete();
+            return response()->json([
+                'tribunaEliminada' => true
+            ]);
+        } catch (\Throwable $th) {
+            throw $th;
+        }
     }
 }

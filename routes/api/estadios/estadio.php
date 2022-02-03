@@ -20,7 +20,9 @@ Route::group([
     //Rutas para gestionar las tribunas
     Route::get('listar_tribunas/{id}','TribunaController@show');
     Route::post('crear_tribuna', 'TribunaController@store');
-
+    Route::put('editar_tribuna/{id}', 'TribunaController@update');
+    Route::delete('eliminar_tribuna/{id}', 'TribunaController@destroy');
+    
     //rutas para gestionar las imagenes secundarias de los estadios
     Route::post('guardar-imagenes-secundarias', 'ImagenesController@store');
     Route::get('imagenes-secundarias/{id}','ImagenesController@show');

@@ -20,7 +20,7 @@ class MotivoInactividadController extends Controller
     {
         //
         $motivos_inactividad = MotivoInactividad::select()->selectRaw("1 as disabled")->withCount(['estadios'])->get();
-        return response()->json(['motivos_inactividad'=>$motivos_inactividad]);
+        return response()->json(['motivos_inactividad' => $motivos_inactividad]);
         // select raw para subconsultas;
     }
 
@@ -32,20 +32,26 @@ class MotivoInactividadController extends Controller
      */
     public function store(Request $request)
     {
-        //
         try {
             return DB::transaction(function () use ($request) {
                 $validator = Validator::make($request->all(), [
                     'nombre_motivo' => 'required',
+                ],[
+                    'nombre_motivo.required' => 'Campo motivo es obligatorio',
                 ]);
                 if ($validator->fails()) {
-                    return response()->json($validator->errors()->toJson(), 400);
-                }
+                    return response()->json([
+                        'success'=> false,
+                        'error' => $validator->errors(),                        
+                    ], 200);
+                };
+
                 $motivo_inactividad = MotivoInactividad::create([
                     'nombre_motivo' => $request->input('nombre_motivo'),
                 ]);
                 return response()->json([
-                    'message' => '!Motivo registrado correctamente!',
+                    'success' => true,
+                    'message' => '!Motivo registrado correctamente!',                    
                     'Motivo' => $motivo_inactividad,
 
                 ], 201);
@@ -97,7 +103,6 @@ class MotivoInactividadController extends Controller
         } catch (\Throwable $th) {
             return $this->capturar($th);
         }
-
     }
 
     /**

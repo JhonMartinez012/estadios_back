@@ -112,8 +112,17 @@ class TerrenoController extends Controller
      * @param  \App\Models\Terreno  $terreno
      * @return \Illuminate\Http\Response
      */
-    public function destroy(Terreno $terreno)
+    public function destroy($id)
     {
-        //
+        // Eliminar terrenos que no han sido utilizados anteriormente
+        try {
+            $terrenoDelete=Terreno::find($id);
+            $terrenoDelete->delete();
+            return response()->json([
+                'terrenoEliminado'=>true,
+            ]);
+        } catch (\Throwable $th) {
+            throw $th;
+        }
     }
 }
