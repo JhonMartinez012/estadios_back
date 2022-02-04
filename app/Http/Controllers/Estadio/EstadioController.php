@@ -25,8 +25,8 @@ class EstadioController extends Controller
                 ->select('estadios.*', 'terrenos.img')
                 ->get();
             foreach ($estadios as $estadio) {
-                $estadio->img_principal = config('app.url_server') . $estadio->img_principal;
-                $estadio->img = config('app.url_server') . $estadio->img;
+                $estadio->img_principal = concatenarUrl($estadio);
+                $estadio->img =  concatenarUrl2($estadio);
             }
             return response()->json(['estadios'=>$estadios]);
         } catch (\Throwable $th) {
@@ -102,8 +102,8 @@ class EstadioController extends Controller
                 ->where('estadios.id', $id)
                 ->select('estadios.*', 'terrenos.*', 'ciudades.*','paises.nombre as nom_pais')
                 ->first();
-            $estadio->img_principal = config('app.url_server') . $estadio->img_principal;
-            $estadio->img = config('app.url_server') . $estadio->img;
+            $estadio->img_principal = concatenarUrl($estadio);
+            $estadio->img = concatenarUrl2($estadio);;
             return response()->json(['estadio'=>$estadio]);
         } catch (\Throwable $th) {
             throw $th;
