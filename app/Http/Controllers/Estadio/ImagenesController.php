@@ -52,7 +52,7 @@ class ImagenesController extends Controller
                 $url_img = Storage::disk('public')->put($imageName, base64_decode($image));
 
                 if ($url_img) {
-                    $imgSecundaria=Imagen::create([
+                    $imgSecundaria = Imagen::create([
                         'ruta_img' => $img_val,
                         'estadio_id' => $request->estadioId
                     ]);
@@ -78,11 +78,21 @@ class ImagenesController extends Controller
     {
         //
         try {
-            $imagenesSecundarias=Imagen::where('estadio_id',$id)->get();
-            foreach ($imagenesSecundarias as $imagenSecundaria) {
-                $imagenSecundaria->ruta_img=config('app.url_server') . $imagenSecundaria->ruta_img;
+            $imagenesSecundarias = Imagen::find($id);
+            if (!$imagenesSecundarias) {
+                return response()->json([
+                    'success' => false
+                ]);
+            } else {
+                $imagenesSecundarias = Imagen::where('estadio_id', $id)->get();
+                foreach ($imagenesSecundarias as $imagenSecundaria) {
+                    $imagenSecundaria->ruta_img = config('app.url_server') . $imagenSecundaria->ruta_img;
+                }
+                return response()->json([
+                    'success' => true,
+                    'imagenesSecundarias' => $imagenesSecundarias
+                ]);
             }
-            return response()->json(['imagenesSecundarias'=>$imagenesSecundarias]);
         } catch (\Throwable $th) {
             throw $th;
         }

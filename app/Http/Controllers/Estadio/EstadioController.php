@@ -28,7 +28,7 @@ class EstadioController extends Controller
                 $estadio->img_principal = concatenarUrl($estadio);
                 $estadio->img =  concatenarUrl2($estadio);
             }
-            return response()->json(['estadios'=>$estadios]);
+            return response()->json(['estadios' => $estadios]);
         } catch (\Throwable $th) {
             throw $th;
         }
@@ -43,17 +43,34 @@ class EstadioController extends Controller
     {
         try {
             return DB::transaction(function () use ($request) {
-                $validator = Validator::make($request->all(), [
-                    'nombreEstadio' => 'required',
-                    'acercaEstadio' => 'required',
-                    'imgPrincipal' => 'required',
-                    'capacidadEstadio'=>'required',
-                    'ciudadId' => 'required',
-                    'terrenoId' => 'required',
-                ]);
+                $validator = Validator::make(
+                    $request->all(),
+                    [
+                        'nombreEstadio' => 'required',
+                        'acercaEstadio' => 'required',
+                        'imgPrincipal' => 'required',
+                        'capacidadEstadio' => 'required| integer| gt:499 | min:3',
+                        'ciudadId' => 'required | integer| gt:0 ',
+                        'terrenoId' => 'required | integer| gt:0  ',
+                    ],
+                    [
+                        'nombreEstadio.required' => 'Campo nombre es obligatorio',
+                        'acercaEstadio.required' => 'Campo acerca es obligatorio',
+                        'imgPrincipal.required' => 'La foto es obligatoria',
+                        'capacidadEstadio.required' => 'La capacidad es obligatorio',
+                        'capacidadEstadio.min' => 'El minimo de capacidad es 500',
+                        'capacidadEstadio.gt' => 'La capacidad es obligatoria',
+                        'ciudadId.gt' => 'Campo ciudad es obligatorio',
+                        'terrenoId.gt' => 'El terreno es obligatorio',
+                    ]
+                );
                 if ($validator->fails()) {
-                    return response()->json($validator->errors()->toJson(), 400);
+                    return response()->json([
+                        'success' => false,
+                        'errores' => $validator->errors()
+                    ], 200);
                 }
+
                 $image_64 = $request['imgPrincipal']; //your base64 encoded data
                 $extension = explode('/', explode(':', substr($image_64, 0, strpos($image_64, ';')))[1])[1];   // .jpg .png .pdf
                 $replace = substr($image_64, 0, strpos($image_64, ',') + 1);
@@ -68,13 +85,13 @@ class EstadioController extends Controller
                         'nombre_estadio' => $request->input('nombreEstadio'),
                         'acerca_estadio' => $request->input('acercaEstadio'),
                         'img_principal' => $img_principal,
-                        'capacidad_estadio'=>$request['capacidadEstadio'],
+                        'capacidad_estadio' => $request['capacidadEstadio'],
                         'terreno_id' => $request->input('terrenoId'),
                         'ciudad_id' => $request->input('ciudadId'),
                     ]);
                 }
                 return response()->json([
-                    'exito'=>true,
+                    'success' => true,
                     'message' => 'Estadio registrado correctamente!',
                     'Estadio' => $estadio,
                     'id' => $estadio->id,
@@ -95,16 +112,26 @@ class EstadioController extends Controller
     {
         //       
         try {
-            $estadio = DB::table('estadios')
-                ->join('terrenos', 'estadios.terreno_id', '=', 'terrenos.id')
-                ->join('ciudades', 'estadios.ciudad_id', '=', 'ciudades.id')
-                ->join('paises','ciudades.pais_id','=','paises.id')
-                ->where('estadios.id', $id)
-                ->select('estadios.*', 'terrenos.*', 'ciudades.*','paises.nombre as nom_pais')
-                ->first();
-            $estadio->img_principal = concatenarUrl($estadio);
-            $estadio->img = concatenarUrl2($estadio);;
-            return response()->json(['estadio'=>$estadio]);
+            $estadio = Estadio::find($id);
+            if (!$estadio) {
+                return response()->json([
+                    'success' => false
+                ]);
+            } else {
+                $estadio = DB::table('estadios')
+                    ->join('terrenos', 'estadios.terreno_id', '=', 'terrenos.id')
+                    ->join('ciudades', 'estadios.ciudad_id', '=', 'ciudades.id')
+                    ->join('paises', 'ciudades.pais_id', '=', 'paises.id')
+                    ->where('estadios.id', $id)
+                    ->select('estadios.*', 'terrenos.*', 'ciudades.*', 'paises.nombre as nom_pais')
+                    ->first();
+                $estadio->img_principal = concatenarUrl($estadio);
+                $estadio->img = concatenarUrl2($estadio);;
+                return response()->json([
+                    'success'=>true,
+                    'estadio' => $estadio
+                ]);
+            }
         } catch (\Throwable $th) {
             throw $th;
         }

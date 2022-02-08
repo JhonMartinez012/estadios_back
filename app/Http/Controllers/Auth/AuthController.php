@@ -115,9 +115,9 @@ class AuthController extends Controller
         try {
             return DB::transaction(function () use ($request) {
                 $validator = Validator::make($request->all(), [
-                    'name' => 'required',
-                    'lastName' => 'required',
-                    'phone' => 'required|string|max:10',
+                    'name' => 'required|min:4|',
+                    'lastName' => 'required|min:5',
+                    'phone' => 'required|string |min:7|max:10',
                     'acerca' => 'required',
                     'email' => 'required|string|email|max:100',
                     'password' => 'required|string|min:6',
@@ -128,12 +128,12 @@ class AuthController extends Controller
                     'phone.required' => 'Campo teléfono obligatorio',
                     'acerca.required' => 'Campo acerca obligatorio',
                     'email.required' => 'Campo correo electronico obligatorio',
-                    'repassword' =>'Campo repetir contraseña obligatorio'
+                    'repassword' => 'Campo repetir contraseña obligatorio'
                 ]);
                 if ($validator->fails()) {
                     return response()->json([
-                        'success'=> false,
-                        'error' => $validator->errors(),                        
+                        'success' => false,
+                        'error' => $validator->errors(),
                     ], 200);
                 };
 
@@ -159,7 +159,7 @@ class AuthController extends Controller
                         ));
                     }
                     return response()->json([
-                        'success'=>true,
+                        'success' => true,
                         'message' => '¡Usuario registrado correctamente!',
                         'user' => $user,
                     ], 201);
@@ -175,8 +175,8 @@ class AuthController extends Controller
         //
         try {
             $administrador = User::find($id);
-            $administrador->img = config('app.url_server') . $administrador->img;
-            if ($administrador) {
+            if ($administrador != null) {
+                $administrador->img = config('app.url_server') . $administrador->img;
                 return response()->json(['administrador' => $administrador]);
             } else {
                 return "Usuario no encontrado";

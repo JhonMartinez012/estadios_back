@@ -25,7 +25,7 @@ class TerrenoController extends Controller
             foreach ($terrenos as $terreno) {
                 $terreno->img = config('app.url_server') . $terreno->img;
             }
-            return response()->json(['terrenos'=>$terrenos]);
+            return response()->json(['terrenos' => $terrenos]);
         } catch (\Throwable $th) {
             return $this->capturar($th);
         }
@@ -48,9 +48,14 @@ class TerrenoController extends Controller
                     'nombre_terreno' => 'required',
                     'img' => 'required',
 
+                ],[
+                    'img.required' => 'Es necesario seleccionar una imagen'
                 ]);
                 if ($validator->fails()) {
-                    return response()->json($validator->errors()->toJson(), 400);
+                    return response()->json([
+                        'success' => false,
+                        'errores' => $validator->errors()
+                    ], 200);
                 }
 
                 $image_64 = $request['img']; //your base64 encoded data
@@ -71,7 +76,7 @@ class TerrenoController extends Controller
                     ]);
                 }
                 return response()->json([
-                    'aceptado'=>true,
+                    'success' => true,
                     'message' => '¡Terreno registrado correctamente!',
                     'terreno' => $terreno,
 
@@ -116,10 +121,10 @@ class TerrenoController extends Controller
     {
         // Eliminar terrenos que no han sido utilizados anteriormente
         try {
-            $terrenoDelete=Terreno::find($id);
+            $terrenoDelete = Terreno::find($id);
             $terrenoDelete->delete();
             return response()->json([
-                'terrenoEliminado'=>true,
+                'terrenoEliminado' => true,
             ]);
         } catch (\Throwable $th) {
             throw $th;
