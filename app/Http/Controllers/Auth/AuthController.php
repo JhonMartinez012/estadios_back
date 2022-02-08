@@ -102,7 +102,7 @@ class AuthController extends Controller
         try {
             $administradores = User::get();
             foreach ($administradores as $administrador) {
-                $administrador->img = config('app.url_server') . $administrador->img;
+                $administrador->img =  concatenarUrl($administrador,'img');
             }
             return response()->json(['administradores' => $administradores]);
         } catch (\Throwable $th) {
@@ -122,13 +122,15 @@ class AuthController extends Controller
                     'email' => 'required|string|email|max:100',
                     'password' => 'required|string|min:6',
                     'repassword' => 'required|string|min:6',
+                   
                 ], [
                     'name.required' => 'Campo nombres obligatorio',
                     'lastName.required' => 'Campo apellidos obligatorio',
                     'phone.required' => 'Campo teléfono obligatorio',
                     'acerca.required' => 'Campo acerca obligatorio',
                     'email.required' => 'Campo correo electronico obligatorio',
-                    'repassword' => 'Campo repetir contraseña obligatorio'
+                    'repassword' => 'Campo repetir contraseña obligatorio',
+                   
                 ]);
                 if ($validator->fails()) {
                     return response()->json([
@@ -138,25 +140,36 @@ class AuthController extends Controller
                 };
 
                 if ($request['password'] === $request['repassword']) {
-                    $image_64 = $request['img']; //your base64 encoded data
-                    $extension = explode('/', explode(':', substr($image_64, 0, strpos($image_64, ';')))[1])[1];   // .jpg .png .pdf    
-                    $replace = substr($image_64, 0, strpos($image_64, ',') + 1);
-                    // find substring fro replace here eg: data:image/png;base64,    
-                    $image = str_replace($replace, '', $image_64);
-                    $image = str_replace(' ', '+', $image);
-                    $imageName = Str::random(10) . '.' . $extension;
-                    $img_val = Storage::url($imageName);
-                    $url_img = Storage::disk('public')->put($imageName, base64_decode($image));
-
-                    if ($url_img) {
+                    if ($request['img'] == null) {
                         $user = User::create(array_merge(
                             $validator->validate(),
                             [
                                 'last_name' => $request->lastName,
                                 'password' => bcrypt($request->password),
-                                'img' => $img_val,
+                                'img' => '/storage/perfil.svg',
                             ]
                         ));
+                    }else{
+                        $image_64 = $request['img']; //your base64 encoded data
+                        $extension = explode('/', explode(':', substr($image_64, 0, strpos($image_64, ';')))[1])[1];   // .jpg .png .pdf    
+                        $replace = substr($image_64, 0, strpos($image_64, ',') + 1);
+                        // find substring fro replace here eg: data:image/png;base64,    
+                        $image = str_replace($replace, '', $image_64);
+                        $image = str_replace(' ', '+', $image);
+                        $imageName = Str::random(10) . '.' . $extension;
+                        $img_val = Storage::url($imageName);
+                        $url_img = Storage::disk('public')->put($imageName, base64_decode($image));
+    
+                        if ($url_img) {
+                            $user = User::create(array_merge(
+                                $validator->validate(),
+                                [
+                                    'last_name' => $request->lastName,
+                                    'password' => bcrypt($request->password),
+                                    'img' => $img_val,
+                                ]
+                            ));
+                        }
                     }
                     return response()->json([
                         'success' => true,
@@ -175,11 +188,15 @@ class AuthController extends Controller
         //
         try {
             $administrador = User::find($id);
-            if ($administrador != null) {
-                $administrador->img = config('app.url_server') . $administrador->img;
-                return response()->json(['administrador' => $administrador]);
+            if ($administrador) {
+                $administrador->img =  concatenarUrl($administrador,'img');
+                return response()->json([
+                    'success'=>true,
+                    'administrador' => $administrador]);
             } else {
-                return "Usuario no encontrado";
+                return response()->json([
+                    'success' => false,
+                ]);;
             }
         } catch (\Throwable $th) {
             throw $th;

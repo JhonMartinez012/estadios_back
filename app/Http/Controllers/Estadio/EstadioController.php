@@ -26,7 +26,7 @@ class EstadioController extends Controller
                 ->get();
             foreach ($estadios as $estadio) {
                 $estadio->img_principal = concatenarUrl($estadio);
-                $estadio->img =  concatenarUrl2($estadio);
+                $estadio->img =  concatenarUrl($estadio,"img");
             }
             return response()->json(['estadios' => $estadios]);
         } catch (\Throwable $th) {
@@ -126,7 +126,7 @@ class EstadioController extends Controller
                     ->select('estadios.*', 'terrenos.*', 'ciudades.*', 'paises.nombre as nom_pais')
                     ->first();
                 $estadio->img_principal = concatenarUrl($estadio);
-                $estadio->img = concatenarUrl2($estadio);;
+                $estadio->img = concatenarUrl($estadio,"img");
                 return response()->json([
                     'success'=>true,
                     'estadio' => $estadio

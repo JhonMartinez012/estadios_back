@@ -23,7 +23,7 @@ class TerrenoController extends Controller
         try {
             $terrenos = Terreno::withCount(['estadios'])->get();
             foreach ($terrenos as $terreno) {
-                $terreno->img = config('app.url_server') . $terreno->img;
+                $terreno->img = concatenarUrl($terreno,'img');
             }
             return response()->json(['terrenos' => $terrenos]);
         } catch (\Throwable $th) {

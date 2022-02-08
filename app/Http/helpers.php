@@ -3,15 +3,19 @@ use Illuminate\Support\Facades\DB;
 
 
 if (! function_exists('concatenarUrl')) {
-    function concatenarUrl($estadios)
+    function concatenarUrl($imagen, $llave="img_principal")
     {        
-        return config('app.url_server').$estadios->img_principal;
+        return config('app.url_server').$imagen->$llave;
     }
 }
-if (! function_exists('concatenarUrl2')) {
-    function concatenarUrl2($estadios)
-    {        
-        return config('app.url_server').$estadios->img;
-    }
-}
+
+
+
+
+// if (! function_exists('concatenarUrl2')) {
+//     function concatenarUrl2($estadios)
+//     {        
+//         return config('app.url_server').$estadios->img;
+//     }
+// }
 
