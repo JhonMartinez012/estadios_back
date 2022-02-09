@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Configuracion;
 
 use App\Http\Controllers\Controller;
 use App\Models\MotivoInactividad;
+use GrahamCampbell\ResultType\Success;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
@@ -111,8 +112,22 @@ class MotivoInactividadController extends Controller
      * @param  \App\Models\MotivoInactividad  $motivoInactividad
      * @return \Illuminate\Http\Response
      */
-    public function destroy(MotivoInactividad $motivoInactividad)
+    public function destroy($id)
     {
-        //
+        try {
+            $motivoInactividadDelete = MotivoInactividad::find($id);
+            if ($motivoInactividadDelete) {
+                $motivoInactividadDelete -> delete();
+                return response()->json([
+                    'success' =>true
+                ]);
+            }else{
+             return response()->json([
+                'msg'=>'El usuario que intenta eliminar no se encuentra',
+             ]);
+            }
+        } catch (\Throwable $th) {
+            //throw $th;
+        }
     }
 }

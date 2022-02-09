@@ -13,5 +13,6 @@ Route::group([
     Route::get('motivos_inactividad',  'MotivoInactividadController@index');
     Route::post('crear_motivo',  'MotivoInactividadController@store');
     Route::put('editar_motivo/{id}', 'MotivoInactividadController@update');
+    Route::delete('eliminarMotivo/{id}','MotivoInactividadController@destroy');
     
 });
