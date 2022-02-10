@@ -37,14 +37,21 @@ class TribunaController extends Controller
             return DB::transaction(function () use ($request) {
                 $validator = Validator::make($request->all(), [
                     'nombreTribuna' => 'required',
-                    'capacidad' => 'required|numeric',
-                    'valorBoleta' => 'numeric|required',
+                    'capacidad' => 'required|numeric|min:500',
+                    'valorBoleta' => 'required|numeric|min:1000',
                     'estadioId' => 'required|numeric',
+                ], [
+                    'nombreTribuna.required' => 'Nombre de tribuna es obligatorio',
+                    'capacidad.required'=>'Ingrese una capacidad mayor o igual a 500',
+                    'capacidad.min' => 'La capacidad mínima de la tribuna es 500',
+                    'valorBoleta.required'=>'Ingrese un valor mayor a $1.000 pesares',
+                    'valorBoleta.min' => 'El valor mínimo de una boleta es $1000'
+
                 ]);
                 if ($validator->fails()) {
                     return response()->json([
-                        'succcess' => false,
-                        'errores' => $validator->errors()->toJson()
+                        'success' => false,
+                        'errores' => $validator->errors()
                     ], 200);
                 };
                 $tribuna = Tribuna::create([
@@ -55,7 +62,7 @@ class TribunaController extends Controller
                 ]);
                 if ($tribuna) {
                     return response()->json([
-                        'success'=> true,
+                        'success' => true,
                         'message' => 'tribuna registrado correctamente!',
                         'Tribuna' => $tribuna,
                     ], 201);
