@@ -101,7 +101,7 @@ return [
     |
     */
 
-    'ttl' => env('JWT_TTL', 60),
+    'ttl' => env('JWT_TTL', 240), // para ponerle el limite del token
 
     /*
     |--------------------------------------------------------------------------

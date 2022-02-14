@@ -1,7 +1,7 @@
 <?php
 use Illuminate\Support\Facades\DB;
 
-
+// funcion global para concatenar las imagenes con la url
 if (! function_exists('concatenarUrl')) {
     function concatenarUrl($imagen, $llave="img_principal")
     {        

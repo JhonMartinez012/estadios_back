@@ -4,6 +4,9 @@ use JWTAuth;
 use Closure;
 use Exception;
 use Tymon\JWTAuth\Http\Middleware\BaseMiddleware;
+
+// middleware para devolver los mensajes de autenticacion
+
 class JwtMiddleware extends BaseMiddleware
 {
     public function handle($request, Closure $next)

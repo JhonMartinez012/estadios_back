@@ -59,7 +59,7 @@ class RouteServiceProvider extends ServiceProvider
             ->namespace($this->namespace)
             ->group(base_path('routes/api.php'));
 
-        $files = \File::allFiles(base_path('routes/api'));
+        $files = \File::allFiles(base_path('routes/api'));  // para que las rutas entren a la carpeta del api y busque su ruta
         foreach ($files as $file) {
             Route::prefix('api')
                 ->middleware('api')

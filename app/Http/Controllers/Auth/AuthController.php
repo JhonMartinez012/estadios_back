@@ -50,7 +50,7 @@ class AuthController extends Controller
     {
         try {
             $userLog = auth()->user();
-            $userLog->img = config('app.url_server') . $userLog->img;
+            $userLog->img = concatenarUrl($userLog,'img');
             return response()->json($userLog);
         } catch (\Throwable $th) {
             throw $th;
@@ -102,7 +102,7 @@ class AuthController extends Controller
         try {
             $administradores = User::get();
             foreach ($administradores as $administrador) {
-                $administrador->img =  concatenarUrl($administrador,'img');
+                $administrador->img =  concatenarUrl($administrador, 'img');
             }
             return response()->json(['administradores' => $administradores]);
         } catch (\Throwable $th) {
@@ -122,7 +122,7 @@ class AuthController extends Controller
                     'email' => 'required|string|email|max:100',
                     'password' => 'required|string|min:6',
                     'repassword' => 'required|string|min:6',
-                   
+
                 ], [
                     'name.required' => 'Campo nombres obligatorio',
                     'lastName.required' => 'Campo apellidos obligatorio',
@@ -130,7 +130,7 @@ class AuthController extends Controller
                     'acerca.required' => 'Campo acerca obligatorio',
                     'email.required' => 'Campo correo electronico obligatorio',
                     'repassword' => 'Campo repetir contraseña obligatorio',
-                   
+
                 ]);
                 if ($validator->fails()) {
                     return response()->json([
@@ -149,7 +149,7 @@ class AuthController extends Controller
                                 'img' => '/storage/perfil.svg',
                             ]
                         ));
-                    }else{
+                    } else {
                         $image_64 = $request['img']; //your base64 encoded data
                         $extension = explode('/', explode(':', substr($image_64, 0, strpos($image_64, ';')))[1])[1];   // .jpg .png .pdf    
                         $replace = substr($image_64, 0, strpos($image_64, ',') + 1);
@@ -159,7 +159,7 @@ class AuthController extends Controller
                         $imageName = Str::random(10) . '.' . $extension;
                         $img_val = Storage::url($imageName);
                         $url_img = Storage::disk('public')->put($imageName, base64_decode($image));
-    
+
                         if ($url_img) {
                             $user = User::create(array_merge(
                                 $validator->validate(),
@@ -189,10 +189,11 @@ class AuthController extends Controller
         try {
             $administrador = User::find($id);
             if ($administrador) {
-                $administrador->img =  concatenarUrl($administrador,'img');
+                $administrador->img =  concatenarUrl($administrador, 'img');
                 return response()->json([
-                    'success'=>true,
-                    'administrador' => $administrador]);
+                    'success' => true,
+                    'administrador' => $administrador
+                ]);
             } else {
                 return response()->json([
                     'success' => false,
@@ -214,23 +215,32 @@ class AuthController extends Controller
                     'phone' => 'required|string|max:10',
                     'acerca' => 'required',
                     'email' => 'required|string|email|max:100',
-
+                    'password' => 'required|string|min:6',
+                    'repassword' => 'required|string|min:6',
                 ]);
                 if ($validator->fails()) {
-                    return response()->json($validator->errors()->toJson(), 400);
+                    return response()->json([
+                        'success' => false,
+                        'errores' => $validator->errors()
+                    ], 200);
                 }
-                $administrador = $administrador->update([
-                    'name' => $request->name,
-                    'last_name' => $request->lastName,
-                    'phone' => $request->phone,
-                    'acerca' => $request->acerca,
-                    'email' => $request->email,
-                ]);
-                return response()->json([
-                    'message' => '!Administrador Actualizado correctamente!',
-                    'Administrador' => $administrador,
 
-                ], 201);
+                if ($request['password'] == $request['repassword']) {
+                    $administrador = $administrador->update([
+                        'name' => $request->name,
+                        'last_name' => $request->lastName,
+                        'phone' => $request->phone,
+                        'acerca' => $request->acerca,
+                        'email' => $request->email,
+                        'password' =>bcrypt($request->password),
+                    ]);
+                    return response()->json([
+                        'success' => true,
+                        'message' => '!Administrador Actualizado correctamente!',
+                        'Administrador' => $administrador,
+
+                    ], 201);
+                };
             }, 5);
         } catch (\Throwable $th) {
             return $this->capturar($th);
