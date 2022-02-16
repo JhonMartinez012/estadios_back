@@ -27,6 +27,10 @@ Route::group([
     Route::post('guardar-imagenes-secundarias', 'ImagenesController@store');
     Route::get('imagenes-secundarias/{id}','ImagenesController@show');
 
+    // Rutas para gestionar inactivar los dias de los estadios
+    Route::post('inactivar-dia-estadio','EstadioMotivoInactividadController@store');
+
+
 
 
 });

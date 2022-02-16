@@ -15,4 +15,5 @@ Route::group([
     Route::put('editar_motivo/{id}', 'MotivoInactividadController@update');
     Route::delete('eliminarMotivo/{id}','MotivoInactividadController@destroy');
     
+    
 });
