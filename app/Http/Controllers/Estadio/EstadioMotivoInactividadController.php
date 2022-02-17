@@ -3,12 +3,16 @@
 namespace App\Http\Controllers\Estadio;
 
 use App\Http\Controllers\Controller;
+use App\Models\Estadio;
 use App\Models\EstadioMotivoInactividad;
+use App\Models\MotivoInactividad;
+use GrahamCampbell\ResultType\Success;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
 
-class EstadioMotivoIncatividadController extends Controller
+
+class EstadioMotivoInactividadController extends Controller
 {
     /**
      * Display a listing of the resource.
@@ -31,13 +35,14 @@ class EstadioMotivoIncatividadController extends Controller
         //
         try {            
             return DB::transaction(function () use ($request) {
-                $validator = Validator::make($request->all(), [
-                   
+                $validator = Validator::make($request->all(), [                   
                     'estadio_id'=> 'required',
                     'motivo_inactividad_id'=>'required',
-                    'fecha'=>'required',
+                    'fecha'=>'required|date',
                 ],[
-                    'nombre_motivo.required' => 'Campo motivo es obligatorio',
+                    'estadio_id.required' => 'Es necesario un estadio',
+                    'motivo_inactividad_id.required' => 'Es necesario un motivo',
+                    'fecha.required' => 'Ingrese una fecha',
                 ]);
                 if ($validator->fails()) {
                     return response()->json([
@@ -46,13 +51,15 @@ class EstadioMotivoIncatividadController extends Controller
                     ], 200);
                 };
 
-                $motivo_inactividad = EstadioMotivoInactividad::create([
-                    'nombre_motivo' => $request->input('nombre_motivo'),
+                $estadioFechaInactivo = EstadioMotivoInactividad::create([
+                    'estadio_id' => $request->estadio_id,
+                    'motivo_inactividad_id' => $request->motivo_inactividad_id,
+                    'fecha' => $request->fecha,
                 ]);
                 return response()->json([
                     'success' => true,
-                    'message' => '!Motivo registrado correctamente!',                    
-                    'Motivo' => $motivo_inactividad,
+                    'message' => '!Fecha de inactividad registrado correctamente!',                    
+                    'fechaInactividad' => $estadioFechaInactivo,
 
                 ], 201);
             }, 5);
@@ -67,9 +74,35 @@ class EstadioMotivoIncatividadController extends Controller
      * @param  \App\Models\EstadioMotivoInactividad  $estadioMotivoInactividad
      * @return \Illuminate\Http\Response
      */
-    public function show(EstadioMotivoInactividad $estadioMotivoInactividad)
+    public function show($id)
     {
         //
+        try {
+          $exist = Estadio::where('id', $id)->exists();
+          if (!$exist) {
+              return ['message' => 'El id estadio no se encuentra registrado'];
+          }
+            
+            /* $estadioMotivosIvactividad = Estadio::select('estadios.id','emi.fecha', 'motivo_inactividad_id','motivos.nombre_motivo')
+            ->join('estadio_motivo_inactividad as emi','emi.estadio_id','estadios.id')
+            ->join('motivos_inactividades as motivos','motivos.id','emi.motivo_inactividad_id')
+            ->where('estadios.id',$id)
+            ->get(); */
+
+            $estadioMotivosIvactividad=EstadioMotivoInactividad::select('fecha','motivos.id as id_motivo','motivos.nombre_motivo')
+            ->join('motivos_inactividades as motivos','motivos.id','motivo_inactividad_id')
+            ->where('estadio_id',$id)
+            ->get();
+
+          return $estadioMotivosIvactividad;
+            
+         /*    return response()->json([
+                'success' => true,
+                'motivos' => $estadioMotivosIvactividad,
+            ]); */
+        } catch (\Throwable $th) {
+            throw $th;
+        }
     }
 
     /**

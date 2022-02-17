@@ -60,7 +60,7 @@ class Estadio extends Model
     // RELACION MUCHOS A MUCHOS CON MOTIVOS DE INACTIVIDAD 
     public function motivo_inactividades()
     {
-        return $this->belongsToMany('App\Models\MotivoInactividad');
+        return $this->belongsToMany('App\Models\MotivoInactividad','estadio_motivo_inactividad');
     }
     // ************** FIN DE LA RELACION :'( ****************************
 
