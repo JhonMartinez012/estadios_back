@@ -43,6 +43,7 @@ class EstadioMotivoInactividadController extends Controller
                     'estadio_id.required' => 'Es necesario un estadio',
                     'motivo_inactividad_id.required' => 'Es necesario un motivo',
                     'fecha.required' => 'Ingrese una fecha',
+                    'fecha.date' => 'La fecha ingresada no es una fecha valida',
                 ]);
                 if ($validator->fails()) {
                     return response()->json([
