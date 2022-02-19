@@ -33,13 +33,13 @@ class EstadioMotivoInactividadController extends Controller
     public function store(Request $request)
     {
         //
-        try {            
+        try {
             return DB::transaction(function () use ($request) {
-                $validator = Validator::make($request->all(), [                   
-                    'estadio_id'=> 'required',
-                    'motivo_inactividad_id'=>'required',
-                    'fecha'=>'required|date',
-                ],[
+                $validator = Validator::make($request->all(), [
+                    'estadio_id' => 'required',
+                    'motivo_inactividad_id' => 'required',
+                    'fecha' => 'required|date',
+                ], [
                     'estadio_id.required' => 'Es necesario un estadio',
                     'motivo_inactividad_id.required' => 'Es necesario un motivo',
                     'fecha.required' => 'Ingrese una fecha',
@@ -47,9 +47,22 @@ class EstadioMotivoInactividadController extends Controller
                 ]);
                 if ($validator->fails()) {
                     return response()->json([
-                        'success'=> false,
-                        'error' => $validator->errors(),                        
+                        'success' => false,
+                        'error' => $validator->errors(),
                     ], 200);
+                };
+
+                $motivoExist = EstadioMotivoInactividad::select('estadio_id', 'motivo_inactividad_id', 'fecha')
+                    ->where('estadio_id', $request->estadio_id)
+                    ->where('motivo_inactividad_id', $request->motivo_inactividad_id)
+                    ->where('fecha', $request->fecha)
+                    ->exists();
+
+                if ($motivoExist) {
+                    return response()->json([
+                        'exist' => true,
+                        'message' => 'Día y motivo para inactivar ya esta registrado!'
+                    ],200);
                 };
 
                 $estadioFechaInactivo = EstadioMotivoInactividad::create([
@@ -59,7 +72,7 @@ class EstadioMotivoInactividadController extends Controller
                 ]);
                 return response()->json([
                     'success' => true,
-                    'message' => '!Fecha de inactividad registrado correctamente!',                    
+                    'message' => '!Fecha de inactividad registrado correctamente!',
                     'fechaInactividad' => $estadioFechaInactivo,
 
                 ], 201);
@@ -79,25 +92,25 @@ class EstadioMotivoInactividadController extends Controller
     {
         //
         try {
-          $exist = Estadio::where('id', $id)->exists();
-          if (!$exist) {
-              return ['message' => 'El id estadio no se encuentra registrado'];
-          }
-            
+            $exist = Estadio::where('id', $id)->exists();
+            if (!$exist) {
+                return ['message' => 'El id estadio no se encuentra registrado'];
+            }
+
             /* $estadioMotivosIvactividad = Estadio::select('estadios.id','emi.fecha', 'motivo_inactividad_id','motivos.nombre_motivo')
             ->join('estadio_motivo_inactividad as emi','emi.estadio_id','estadios.id')
             ->join('motivos_inactividades as motivos','motivos.id','emi.motivo_inactividad_id')
             ->where('estadios.id',$id)
             ->get(); */
 
-            $estadioMotivosIvactividad=EstadioMotivoInactividad::select('fecha','motivos.id as id_motivo','motivos.nombre_motivo')
-            ->join('motivos_inactividades as motivos','motivos.id','motivo_inactividad_id')
-            ->where('estadio_id',$id)
-            ->get();
+            $estadioMotivosIvactividad = EstadioMotivoInactividad::select('fecha', 'motivos.id as id_motivo', 'motivos.nombre_motivo')
+                ->join('motivos_inactividades as motivos', 'motivos.id', 'motivo_inactividad_id')
+                ->where('estadio_id', $id)
+                ->get();
 
-          return $estadioMotivosIvactividad;
-            
-         /*    return response()->json([
+            return $estadioMotivosIvactividad;
+
+            /*    return response()->json([
                 'success' => true,
                 'motivos' => $estadioMotivosIvactividad,
             ]); */
