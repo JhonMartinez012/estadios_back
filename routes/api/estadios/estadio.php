@@ -29,7 +29,9 @@ Route::group([
 
     // Rutas para gestionar inactivar los dias de los estadios
     Route::post('inactivar-dia-estadio','EstadioMotivoInactividadController@store');
-    Route::get('listar-dias-inactivos/{id}','EstadioMotivoInactividadController@show'); 
+    Route::get('listar-dias-inactivos/{id}','EstadioMotivoInactividadController@show');
+    Route::delete('habilitar-dia-inactivo/{id}','EstadioMotivoInactividadController@destroy');
+
 
 
 

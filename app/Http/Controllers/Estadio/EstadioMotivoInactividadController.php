@@ -62,7 +62,7 @@ class EstadioMotivoInactividadController extends Controller
                     return response()->json([
                         'exist' => true,
                         'message' => 'Día y motivo para inactivar ya esta registrado!'
-                    ],200);
+                    ], 200);
                 };
 
                 $estadioFechaInactivo = EstadioMotivoInactividad::create([
@@ -103,7 +103,7 @@ class EstadioMotivoInactividadController extends Controller
             ->where('estadios.id',$id)
             ->get(); */
 
-            $estadioMotivosIvactividad = EstadioMotivoInactividad::select('fecha', 'motivos.id as id_motivo', 'motivos.nombre_motivo')
+            $estadioMotivosIvactividad = EstadioMotivoInactividad::select('estadio_motivo_inactividad.id', 'fecha', 'motivos.id as id_motivo', 'motivos.nombre_motivo')
                 ->join('motivos_inactividades as motivos', 'motivos.id', 'motivo_inactividad_id')
                 ->where('estadio_id', $id)
                 ->get();
@@ -137,8 +137,27 @@ class EstadioMotivoInactividadController extends Controller
      * @param  \App\Models\EstadioMotivoInactividad  $estadioMotivoInactividad
      * @return \Illuminate\Http\Response
      */
-    public function destroy(EstadioMotivoInactividad $estadioMotivoInactividad)
+    public function destroy($id)
     {
         //
+        try {
+
+            $motivoDelete = EstadioMotivoInactividad::find($id)->delete();            
+            if ($motivoDelete) {
+                return response()->json([
+                    'delete' => true,
+                ]);
+            } else {
+                return response()->json([
+                    'delete' => false,
+                ]);
+            };
+            //$motivoDelete->delete();
+            /* return response()->json([
+                'MotivoEliminado' => true,
+            ]); */
+        } catch (\Throwable $th) {
+            throw $th;
+        }
     }
 }
