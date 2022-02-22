@@ -21,7 +21,7 @@ class CreateTribunasTable extends Migration
             $table->double('valor_boleta',8,2);
 
             $table->unsignedBigInteger('estadio_id');
-            $table->foreign('estadio_id')->references('id')->on('estadios');
+            $table->foreign('estadio_id')->references('id')->on('estadios')->onDelete('cascade');
 
             $table->unsignedBigInteger('created_by')->nullable();
             $table->unsignedBigInteger('updated_by')->nullable();

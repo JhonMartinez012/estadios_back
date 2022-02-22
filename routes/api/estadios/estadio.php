@@ -12,6 +12,8 @@ Route::group([
     Route::get('listar_estadios',  'EstadioController@index');
     Route::get('ver_estadio/{id}',  'EstadioController@show');
     Route::post('crear_estadio', 'EstadioController@store');
+    Route::delete('eliminar-estadio/{id}', 'EstadioController@destroy');
+
 
     //Rutas para listar los paises y ciudades
     Route::get('paises',  'PaisController@index');

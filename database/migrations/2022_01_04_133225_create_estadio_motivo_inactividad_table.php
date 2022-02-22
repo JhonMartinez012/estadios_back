@@ -17,19 +17,19 @@ class CreateEstadioMotivoInactividadTable extends Migration
             $table->id();
 
             $table->unsignedBigInteger('estadio_id');
-            $table->unsignedBigInteger('motivo_inactividad_id');     
+            $table->unsignedBigInteger('motivo_inactividad_id');
 
             $table->date('fecha');
 
             $table->unsignedBigInteger('created_by')->nullable();
             $table->unsignedBigInteger('updated_by')->nullable();
             $table->unsignedBigInteger('deleted_by')->nullable();
-            $table->timestamps();
-            $table->softDeletes();
 
             $table->foreign('estadio_id')->references('id')->on('estadios')->onDelete('cascade');
             $table->foreign('motivo_inactividad_id')->references('id')->on('motivos_inactividades')->onDelete('cascade');
             
+            $table->timestamps();
+            $table->softDeletes();
         });
     }
 
