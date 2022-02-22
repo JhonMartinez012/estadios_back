@@ -23,10 +23,11 @@ class EstadioController extends Controller
             $estadios = DB::table('estadios')
                 ->join('terrenos', 'estadios.terreno_id', '=', 'terrenos.id')
                 ->select('estadios.*', 'terrenos.img')
+                ->where('estadios.deleted_by',null)
                 ->get();
             foreach ($estadios as $estadio) {
                 $estadio->img_principal = concatenarUrl($estadio);
-                $estadio->img =  concatenarUrl($estadio,"img");
+                $estadio->img =  concatenarUrl($estadio, "img");
             }
             return response()->json(['estadios' => $estadios]);
         } catch (\Throwable $th) {
@@ -123,12 +124,12 @@ class EstadioController extends Controller
                     ->join('ciudades', 'estadios.ciudad_id', '=', 'ciudades.id')
                     ->join('paises', 'ciudades.pais_id', '=', 'paises.id')
                     ->where('estadios.id', $id)
-                    ->select('estadios.*', 'terrenos.*', 'ciudades.*', 'paises.nombre as nom_pais')
+                    ->select('estadios.*', 'estadios.id as idEstadio', 'terrenos.*', 'ciudades.*', 'paises.nombre as nom_pais')
                     ->first();
                 $estadio->img_principal = concatenarUrl($estadio);
-                $estadio->img = concatenarUrl($estadio,"img");
+                $estadio->img = concatenarUrl($estadio, "img");
                 return response()->json([
-                    'success'=>true,
+                    'success' => true,
                     'estadio' => $estadio
                 ]);
             }
@@ -154,8 +155,22 @@ class EstadioController extends Controller
      * @param  \App\Models\Estadio  $estadio
      * @return \Illuminate\Http\Response
      */
-    public function destroy(Estadio $estadio)
+    public function destroy($id)
     {
         //
+        try {
+            $estadioDelete = Estadio::find($id)->delete();
+            if ($estadioDelete) {
+                return response()->json([
+                    "delete" => true
+                ]);
+            } else {
+                return response()->json([
+                    "delete" => true
+                ]);
+            }
+        } catch (\Throwable $th) {
+            throw $th;
+        }
     }
 }
