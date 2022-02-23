@@ -16,9 +16,15 @@ class CreateMotivosInactividadesTable extends Migration
         Schema::create('motivos_inactividades', function (Blueprint $table) {
             $table->id();
             $table->string('nombre_motivo',45);
+            
             $table->unsignedBigInteger('created_by')->nullable();
+            $table->foreign('created_by')->references('id')->on('users')->onDelete('set null')->onUpdate('cascade');
+
             $table->unsignedBigInteger('updated_by')->nullable();
+            $table->foreign('updated_by')->references('id')->on('users')->onDelete('set null')->onUpdate('cascade');
+
             $table->unsignedBigInteger('deleted_by')->nullable();
+            $table->foreign('deleted_by')->references('id')->on('users')->onDelete('set null')->onUpdate('cascade');
             $table->timestamps();
             $table->softDeletes();
         });
