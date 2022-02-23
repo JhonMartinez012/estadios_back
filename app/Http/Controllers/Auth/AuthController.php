@@ -50,7 +50,7 @@ class AuthController extends Controller
     {
         try {
             $userLog = auth()->user();
-            $userLog->img = concatenarUrl($userLog,'img');
+            $userLog->img = concatenarUrl($userLog, 'img');
             return response()->json($userLog);
         } catch (\Throwable $th) {
             throw $th;
@@ -208,40 +208,46 @@ class AuthController extends Controller
     {
         try {
             $administrador = User::find($id);
-            return DB::transaction(function () use ($request, $administrador) {
-                $validator = Validator::make($request->all(), [
-                    'name' => 'required',
-                    'lastName' => 'required',
-                    'phone' => 'required|string|max:10',
-                    'acerca' => 'required',
-                    'email' => 'required|string|email|max:100',
-                    'password' => 'required|string|min:6',
-                    'repassword' => 'required|string|min:6',
-                ]);
-                if ($validator->fails()) {
-                    return response()->json([
-                        'success' => false,
-                        'errores' => $validator->errors()
-                    ], 200);
-                }
-
-                if ($request['password'] == $request['repassword']) {
-                    $administrador = $administrador->update([
-                        'name' => $request->name,
-                        'last_name' => $request->lastName,
-                        'phone' => $request->phone,
-                        'acerca' => $request->acerca,
-                        'email' => $request->email,
-                        'password' =>bcrypt($request->password),
+            if ($administrador) {
+                return DB::transaction(function () use ($request, $administrador) {
+                    $validator = Validator::make($request->all(), [
+                        'name' => 'required',
+                        'lastName' => 'required',
+                        'phone' => 'required|string|max:10',
+                        'acerca' => 'required',
+                        'email' => 'required|string|email|max:100',
+                        'password' => 'required|string|min:6',
+                        'repassword' => 'required|string|min:6',
                     ]);
-                    return response()->json([
-                        'success' => true,
-                        'message' => '!Administrador Actualizado correctamente!',
-                        'Administrador' => $administrador,
+                    if ($validator->fails()) {
+                        return response()->json([
+                            'success' => false,
+                            'errores' => $validator->errors()
+                        ], 200);
+                    }
 
-                    ], 201);
-                };
-            }, 5);
+                    if ($request['password'] == $request['repassword']) {
+                        $administrador = $administrador->update([
+                            'name' => $request->name,
+                            'last_name' => $request->lastName,
+                            'phone' => $request->phone,
+                            'acerca' => $request->acerca,
+                            'email' => $request->email,
+                            'password' => bcrypt($request->password),
+                        ]);
+                        return response()->json([
+                            'success' => true,
+                            'message' => '!Administrador Actualizado correctamente!',
+                            'Administrador' => $administrador,
+
+                        ], 201);
+                    };
+                }, 5);
+            }else{
+                return response()->json([
+                    'user'=>'Administrador no registrado en la bd'
+                ]);
+            }
         } catch (\Throwable $th) {
             return $this->capturar($th);
         }
