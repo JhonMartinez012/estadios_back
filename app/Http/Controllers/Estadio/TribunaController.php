@@ -55,36 +55,37 @@ class TribunaController extends Controller
                         'errores' => $validator->errors()
                     ], 200);
                 };
-
                 $capacidadEstadio = DB::table('estadios')
                     // ->select('capacidad_estadio')
                     ->where('id', $request->estadioId)
                     ->pluck('capacidad_estadio');
 
-                $capacidadOcupada = DB::table('tribunas')
-                    ->select('capacidad')
-                    ->where('estadio_id', $request->estadioId)
-                    ->where('deleted_by', null)
-                    ->get()
-                    ->groupBy('estadio_id')
-                    ->values()->map(function ($value, $key) {
-                        $total = 0;
-                        foreach ($value as $itercion) {
-                            $total += $itercion->capacidad;
-                        }
-                        return [
-                            'total' => $total
-                        ];
-                    });
+                $existeTribunas = Tribuna::where('estadio_id', $request->estadioId)->exists();
+                
+                if ($existeTribunas) {
+                    $capacidadOcupada = DB::table('tribunas')
+                        ->select('capacidad')
+                        ->where('estadio_id', $request->estadioId)
+                        ->where('deleted_by', null)
+                        ->get()
+                        ->groupBy('estadio_id')
+                        ->values()->map(function ($value, $key) {
+                            $total = 0;
+                            foreach ($value as $itercion) {
+                                $total += $itercion->capacidad;
+                            }
+                            return [
+                                'total' => $total
+                            ];
+                        });
+                    $capacidadLibre = ($capacidadEstadio[0] - $capacidadOcupada[0]['total']);
+                } else {
+                    $capacidadOcupada = 0;
+                    $capacidadLibre = ($capacidadEstadio[0]);
+                }
 
 
-                // return $capacidadEstadio[0]-$capacidadOcupada[0]['total'];
-
-                $capacidadLibre = ($capacidadEstadio[0] - $capacidadOcupada[0]['total']);
-                //return response()->json(["capaLib"=>$capacidadLibre]);
-
-
-                if ($capacidadLibre > $request->capacidad) {
+                if ($capacidadLibre >= $request->capacidad) {
                     $tribuna = Tribuna::create([
                         'nombre_tribuna' => $request->nombreTribuna,
                         'capacidad' => $request->capacidad,
@@ -162,9 +163,9 @@ class TribunaController extends Controller
                         'actualizado' => true,
                     ], 201);
                 }, 5);
-            }else{
+            } else {
                 return response()->json([
-                    'existe'=>'La tribuna que busca no existe'
+                    'existe' => 'La tribuna que busca no existe'
                 ]);
             }
         } catch (\Throwable $th) {

@@ -12,6 +12,7 @@ Route::group([
     Route::get('listar_estadios',  'EstadioController@index');
     Route::get('ver_estadio/{id}',  'EstadioController@show');
     Route::post('crear_estadio', 'EstadioController@store');
+    Route::put('editar-estadio/{id}', 'EstadioController@update');
     Route::delete('eliminar-estadio/{id}', 'EstadioController@destroy');
 
 
@@ -28,6 +29,9 @@ Route::group([
     //rutas para gestionar las imagenes secundarias de los estadios
     Route::post('guardar-imagenes-secundarias', 'ImagenesController@store');
     Route::get('imagenes-secundarias/{id}','ImagenesController@show');
+    Route::put('editar-imagenes-secundarias/{id}','ImagenesController@update');
+    Route::delete('eliminar-imagen-secundaria/{id}', 'ImagenesController@destroy');
+
 
     // Rutas para gestionar inactivar los dias de los estadios
     Route::post('inactivar-dia-estadio','EstadioMotivoInactividadController@store');

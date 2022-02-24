@@ -105,9 +105,52 @@ class ImagenesController extends Controller
      * @param  \App\Models\Imagen  $imagen
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, Imagen $imagen)
+    public function update($id, Request $request)
     {
         //
+        
+        try {
+                $existe = Imagen::find($id)->exists();
+                if ($existe) {
+
+                return DB::transaction(function () use ($id, $request) {
+                    $validator = Validator::make($request->all(), [
+                        'imgSecEdit' => 'required',
+                        'estadioId' => 'required',
+
+                    ]);
+                    if ($validator->fails()) {
+                        return response()->json($validator->errors()->toJson(), 200);
+                    }
+                    
+                    $image_64 = $request['imgSecEdit']; //your base64 encoded data
+                    $extension = explode('/', explode(':', substr($image_64, 0, strpos($image_64, ';')))[1])[1];   // .jpg .png .pdf
+                    $replace = substr($image_64, 0, strpos($image_64, ',') + 1);
+                    // find substring fro replace here eg: data:image/png;base64,
+                    $image = str_replace($replace, '', $image_64);
+                    $image = str_replace(' ', '+', $image);
+                    $imageName = Str::random(10) . '.' . $extension;
+                    $img_val = Storage::url($imageName);
+                    $url_img = Storage::disk('public')->put($imageName, base64_decode($image));
+
+                    if ($url_img) {
+                        $imagenSecundariaEditar = Imagen::find($id);
+                        $imagenSecundariaEditar = $imagenSecundariaEditar->update([
+                            'ruta_img' => $img_val,
+                        ]);
+                    }
+                    return response()->json([
+                        'success'=>true,
+                        'message' => 'Imagen del estadio actualizada correctamente!',
+                        'Imagen' => $imagenSecundariaEditar,
+
+                    ], 201);
+                }, 5);
+            }
+            } catch (\Throwable $th) {
+                throw $th;
+            }
+        
     }
 
     /**
@@ -116,8 +159,32 @@ class ImagenesController extends Controller
      * @param  \App\Models\Imagen  $imagen
      * @return \Illuminate\Http\Response
      */
-    public function destroy(Imagen $imagen)
+    public function destroy($id)
     {
-        //
+        try {
+            return DB::transaction(function () use ($id) {
+                $existe = Imagen::where('id', $id)->exists();
+                if ($existe) {
+                    $imgSecundariaDelete = Imagen::find($id)->delete();
+                    if ($imgSecundariaDelete) {
+                        return response()->json([
+                            'success' => true,
+                            'msgDelete' => "Imagen eliminada correctamente!"
+                        ]);
+                    } else {
+                        return response()->json([
+                            'success' => false,
+                            'msgDelete' => "No se pudo eliminar la imagen"
+                        ]);
+                    }
+                } else {
+                    return response()->json([
+                        'existe' => false
+                    ]);
+                }
+            }, 5);
+        } catch (\Throwable $th) {
+            //throw $th;
+        }
     }
 }

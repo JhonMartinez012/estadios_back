@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Estadio;
 use App\Http\Controllers\Controller;
 use App\Models\Estadio;
 use App\Models\Tribuna;
+use GrahamCampbell\ResultType\Success;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
@@ -145,10 +146,52 @@ class EstadioController extends Controller
      * @param  \App\Models\Estadio  $estadio
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, Estadio $estadio)
+    public function update($id, Request $request)
     {
         //
+        try {
+            $estadioExist = Estadio::where('id',$id)->exists();
+            if (!$estadioExist) {
+                return response()->json([
+                    'exist' => false
+                ]);
+            } else {
+                $estadioEdit= Estadio::find($id);
+                return DB::transaction(function () use ($request, $estadioEdit) {
+                    $validator = Validator::make($request->all(), [
+                        'nombreEstadio' => 'required',
+                        'acercaEstadio' => 'required',
+                        'ciudadId' => 'required | integer| gt:0',
+                        'terrenoId' => 'required | integer| gt:0',
+                        'capacidadEstadio' => 'required| integer| gt:499 | min:3',
+                        
+                    ]);
+                    if ($validator->fails()) {
+                        return response()->json([
+                            'success' => false,
+                            'errores' => $validator->errors()
+                        ], 200);
+                    }
+
+                    $estadioEdit=$estadioEdit->update([
+                        'nombre_estadio'=>$request->nombreEstadio,
+                        'acerca_estadio'=>$request->acercaEstadio,
+                        'capacidad_estadio'=>$request->capacidadEstadio,
+                        'terreno_id'=>$request->terrenoId ,
+                        'ciudad_id'=>$request->ciudadId,
+                    ]); 
+                    return response()->json([
+                        'success' => true,
+                        'message' => '!Estadio actualizado correctamente!',
+                        'estadio' => $estadioEdit,
+                    ], 201);                   
+                }, 5);
+            }
+        } catch (\Throwable $th) {
+            throw $th;
+        }
     }
+
 
     /**
      * Remove the specified resource from storage.
@@ -162,16 +205,16 @@ class EstadioController extends Controller
         try {
             return DB::transaction(function () use ($id) {
                 $tribunasDelete = DB::table('tribunas')->where('estadio_id', $id)->delete();
-                if ( $tribunasDelete) {
+                if ($tribunasDelete) {
                     $tribunasDelete = "eliminado";
                 }
-                
-                $motivosDelete = DB::table('estadio_motivo_inactividad')->where('estadio_id',$id)->delete();
+
+                $motivosDelete = DB::table('estadio_motivo_inactividad')->where('estadio_id', $id)->delete();
                 if ($motivosDelete) {
                     $motivosDelete = "eliminado";
                 }
-                    
-                
+
+
                 if ($tribunasDelete == "eliminado" && $motivosDelete == "eliminado") {
                     $estadioDelete = Estadio::find($id)->delete();
                     if ($estadioDelete) {
