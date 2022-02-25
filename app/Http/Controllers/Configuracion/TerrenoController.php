@@ -23,7 +23,7 @@ class TerrenoController extends Controller
         try {
             $terrenos = Terreno::withCount(['estadios'])->get();
             foreach ($terrenos as $terreno) {
-                $terreno->img = concatenarUrl($terreno,'img');
+                $terreno->img = concatenarUrl($terreno, 'img');
             }
             return response()->json(['terrenos' => $terrenos]);
         } catch (\Throwable $th) {
@@ -48,7 +48,7 @@ class TerrenoController extends Controller
                     'nombre_terreno' => 'required',
                     'img' => 'required',
 
-                ],[
+                ], [
                     'img.required' => 'Es necesario seleccionar una imagen'
                 ]);
                 if ($validator->fails()) {
@@ -106,9 +106,70 @@ class TerrenoController extends Controller
      * @param  \App\Models\Terreno  $terreno
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, Terreno $terreno)
+    public function update(Request $request, $id)
     {
         //
+        try {
+            return DB::transaction(function () use ($request, $id) {
+                $terrenoExist = Terreno::find($id)->exists();
+                if ($terrenoExist) {
+                    $validator = Validator::make($request->all(), [
+                        'nombre_terreno' => 'required',
+
+                    ], [
+                        'nombre_terreno.required' => 'El nombre del terreno es necesario'
+                    ]);
+                    if ($validator->fails()) {
+                        return response()->json([
+                            'success' => false,
+                            'errores' => $validator->errors()
+                        ], 200);
+                    }
+
+                    $terrenoEdit = Terreno::find($id);
+                    if ($request->img == null) {
+                        $terrenoEdit = $terrenoEdit->update([
+                            'nombre_terreno' => $request->nombre_terreno
+                        ]);
+                        return response()->json([
+                            'success' => true,
+                            'message' => '¡Terreno actualizado correctamente!',
+                        ], 201);
+                    } else {
+                        $image_64 = $request['img']; //your base64 encoded data
+                        $extension = explode('/', explode(':', substr($image_64, 0, strpos($image_64, ';')))[1])[1];   // .jpg .png .pdf
+                        $replace = substr($image_64, 0, strpos($image_64, ',') + 1);
+                        // find substring fro replace here eg: data:image/png;base64,
+                        $image = str_replace($replace, '', $image_64);
+                        $image = str_replace(' ', '+', $image);
+                        $imageName = Str::random(10) . '.' . $extension;
+                        $img_val = Storage::url($imageName);
+                        $url_img = Storage::disk('public')->put($imageName, base64_decode($image));
+
+                        if ($url_img) {
+                            $terrenoEdit = $terrenoEdit->update([
+                                'nombre_terreno' => $request->input('nombre_terreno'),
+                                'img' => $img_val,
+
+                            ]);
+                        }
+                        return response()->json([
+                            'success' => true,
+                            'message' => '¡Terreno actualizado correctamente!',
+
+
+                        ], 201);
+                    }
+                } else {
+                    return response()->json([
+                        'existe' => false,
+                        'msg' => 'Terreno no encontrado'
+                    ], 200);
+                }
+            }, 5);
+        } catch (\Throwable $th) {
+            //throw $th;
+        }
     }
 
     /**

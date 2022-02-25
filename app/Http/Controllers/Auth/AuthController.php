@@ -243,9 +243,9 @@ class AuthController extends Controller
                         ], 201);
                     };
                 }, 5);
-            }else{
+            } else {
                 return response()->json([
-                    'user'=>'Administrador no registrado en la bd'
+                    'user' => 'Administrador no registrado en la bd'
                 ]);
             }
         } catch (\Throwable $th) {
@@ -259,6 +259,56 @@ class AuthController extends Controller
             $administrador = User::find($id);
             $administrador->delete();
             return response()->json(['administrador' => 'Administrador eliminado!']);
+        } catch (\Throwable $th) {
+            throw $th;
+        }
+    }
+
+
+    public function editImgPerfil($id, Request $request)
+    {
+        try {
+            $existAdmin = User::find($id)->exists();
+            if ($existAdmin) {
+                return DB::transaction(function () use ($request, $id) {
+                    $imgAdminEdit = User::find($id);
+                   
+                    if ($request['imgEdit'] == null) {
+                        $imgAdminEdit = $imgAdminEdit->update([
+                            'img' => '/storage/perfil.svg',
+                        ]);
+                        return response()->json([
+                            'success' => true,
+                            'message' => 'Imagen de perfil eliminada correctamente!',
+                        ], 201);
+                    } else {
+                        $image_64 = $request['imgEdit']; //your base64 encoded data
+                        $extension = explode('/', explode(':', substr($image_64, 0, strpos($image_64, ';')))[1])[1];   // .jpg .png .pdf
+                        $replace = substr($image_64, 0, strpos($image_64, ',') + 1);
+                        // find substring fro replace here eg: data:image/png;base64,
+                        $image = str_replace($replace, '', $image_64);
+                        $image = str_replace(' ', '+', $image);
+                        $imageName = Str::random(10) . '.' . $extension;
+                        $img_val = Storage::url($imageName);
+                        $url_img = Storage::disk('public')->put($imageName, base64_decode($image));
+
+                        if ($url_img) {
+                            $imgAdminEdit = $imgAdminEdit->update([
+                                'img' => $img_val,
+                            ]);
+                        }
+                        return response()->json([
+                            'success' => true,
+                            'message' => 'Imagen de perfil actualizada correctamente!',
+                        ], 201);
+                    }
+                }, 5);
+            } else {
+                return response()->json([
+                    'existe' => false,
+                    'msg' => 'Administrador no encontrado'
+                ]);
+            }
         } catch (\Throwable $th) {
             throw $th;
         }

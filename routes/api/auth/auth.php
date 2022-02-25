@@ -19,6 +19,7 @@ Route::group([
     Route::post('register', 'AuthController@register');
     Route::get('usuarios', 'AuthController@index'); 
     Route::get('administrador/{id}', 'AuthController@show');
-    Route::put('editar_administrador/{id}', 'AuthController@update');
-    Route::delete('eliminar_administrador/{id}', 'AuthController@destroy');
+    Route::put('editar-administrador/{id}', 'AuthController@update');
+    Route::put('editar-img-administrador/{id}', 'AuthController@editImgPerfil'); // Editar la imagen del administrador 
+    Route::delete('eliminar-administrador/{id}', 'AuthController@destroy');
 });
